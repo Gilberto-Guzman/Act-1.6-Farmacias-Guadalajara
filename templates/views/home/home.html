@@ -7,6 +7,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Farmacias Guadalajara</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/bootstrap.min.css') }}">
+  <link rel="stylesheet2" href="{{ url_for('static', filename='assets/icons/') }}">
+
 </head>
 
 <body>
@@ -14,6 +16,7 @@
   {% include 'tools/navbar.html' %}
 
   {% include 'views/home/container/carousel.html' %}
+
   {% include 'views/home/container/card.html' %}
 
   {% include 'tools/footer.html' %}
