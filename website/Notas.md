@@ -1,6 +1,7 @@
 ### Comandos Utilizados...
 
     pip install flask
+    pip install MySQLdb
     python3 app.py
 
 ### Rutas
