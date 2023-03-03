@@ -4,7 +4,7 @@
 
 ### Repositorio.
 
-    https://github.com/Gilberto-Guzman/Act-1.6-Farmacias-Guadalajara
+    https://github.com/Gilberto-Guzman/Farmacias-Guadalajara
 
 ### Capturas.
 
