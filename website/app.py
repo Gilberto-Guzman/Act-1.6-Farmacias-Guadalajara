@@ -26,6 +26,10 @@ def contact():
     return render_template("views/contact/contact.html")
 
 
+# global loggedin
+# loggedin = False
+
+
 @app.route("/login", methods=['GET', 'POST'])
 def login():
     msg = ''
@@ -37,10 +41,13 @@ def login():
             'SELECT * FROM accounts WHERE username = % s AND password = % s', (username, password, ))
         account = cursor.fetchone()
         if account:
+            # loggedin = True
+            # app.config['loggedin'] = True
             session['loggedin'] = True
             session['id'] = account['id']
             session['username'] = account['username']
             msg = '¡Ha iniciado sesión correctamente!'
+
             return render_template('views/home/home.html', msg=msg)
         else:
             msg = 'Usuario o contraseña incorrectos...'

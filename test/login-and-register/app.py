@@ -15,8 +15,6 @@ app.config['MYSQL_DB'] = 'farmaciasguadalajara'
 
 mysql = MySQL(app)
 
-session['loggedin'] = False
-
 
 @app.route('/')
 @app.route('/login', methods=['GET', 'POST'])

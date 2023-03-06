@@ -1,13 +1,13 @@
-### Comandos Utilizados...
+### Librerias Utilizadas
 
     pip install flask
     pip install MySQLdb
     python3 app.py
     pip install mysqlclient
     pip install flask_sqlalchemy
+    pip install flask-login
 
-### Rutas
+### comandos Utilizados
 
-    http://127.0.0.1:8000/views/
-    http://127.0.0.1:8000/views/profile/tim
-    http://127.0.0.1:8000/views/profile?name=tim
+    python3 app.py
+    python.exe -m pip install --upgrade pip
