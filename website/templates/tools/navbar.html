@@ -9,10 +9,10 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('views.home') }}">Inicio</a>
+                    <a class="nav-link" href="{{ url_for('home') }}">Inicio</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('views.contact') }}">Contacto</a>
+                    <a class="nav-link" href="{{ url_for('contact') }}">Contacto</a>
                 </li>
 
                 <div class="btn-group">
@@ -28,8 +28,8 @@
                         Mi cuenta
                     </button>
                     <div class="dropdown-menu">
-                        <a class="dropdown-item" href="{{ url_for('auth.login') }}">Inicia Sesión</a>
-                        <a class="dropdown-item" href="{{ url_for('auth.register') }}">Registrate</a>
+                        <a class="dropdown-item" href="{{ url_for('login') }}">Inicia Sesión</a>
+                        <a class="dropdown-item" href="{{ url_for('register') }}">Registrate</a>
                     </div>
                 </div>
             </ul>

@@ -1,19 +1,33 @@
-<div class="container text-center mt-5 mb-5">
-    <div class="row ">
-        <!-- <div class="col order-last">
-        </div> -->
-        <div class="col">
-            <div class="col mb-3">
-                <label for="exampleInputEmail1" class="form-label">Correo Electronico</label>
-                <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+<form action="{{ url_for('register') }}" method="post">
+    <div class="container text-center mt-5 mb-5">
+        <div class="row ">
+            <div class="msg">
+                <h1>{{ msg }}</h1><br><br>
             </div>
-            <div class="col mb-3">
-                <label for="exampleInputPassword1" class="form-label">Contraseña</label>
-                <input type="password" class="form-control" id="exampleInputPassword1">
+            <div class="col">
+
+                <div class="col-9 mx-auto mb-3">
+                    <label for="InputUsername" class="form-label">
+                        <h5>Usuario</h5>
+                    </label>
+                    <input id="username" name="username" type="text" class="form-control">
+                </div>
+
+                <div class="col-9 mx-auto mb-3">
+                    <label for="InputEmail" class="form-label">
+                        <h5>Correo Electronico</h5>
+                    </label>
+                    <input id="email" name="email" type="text" class="form-control">
+                </div>
+                <div class="col-9 mx-auto mb-3">
+                    <label for="InputPassword" class="form-label">
+                        <h5>Contraseña</h5>
+                    </label>
+                    <input id="password" name="password" type="password" class="form-control"><br>
+                    <button type="submit" class="btn btn-danger w-100" value="Sign Up">Crear Cuenta</button>
+                </div>
+
             </div>
-            <button type="submit" class="btn btn-danger">Crear Cuenta</button>
         </div>
-        <!-- <div class="col order-first">
-        </div> -->
     </div>
-</div>
+</form>

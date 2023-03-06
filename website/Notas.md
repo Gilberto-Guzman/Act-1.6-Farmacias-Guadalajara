@@ -3,6 +3,8 @@
     pip install flask
     pip install MySQLdb
     python3 app.py
+    pip install mysqlclient
+    pip install flask_sqlalchemy
 
 ### Rutas
 
