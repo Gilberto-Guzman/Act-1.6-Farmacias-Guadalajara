@@ -5,9 +5,6 @@ import re
 
 app = Flask(__name__)
 
-
-app.secret_key = 'your secret key'
-
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = 'CHICHARITOBLUE4'
@@ -24,10 +21,6 @@ def home():
 @app.route("/contact")
 def contact():
     return render_template("views/contact/contact.html")
-
-
-# global loggedin
-# loggedin = False
 
 
 @app.route("/login", methods=['GET', 'POST'])
@@ -93,5 +86,8 @@ def logout():
     return redirect(url_for('login'))
 
 
+# if __name__ == '__main__':
+#     app.run(debug=True)
+
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(port=8080, host='0.0.0.0')
