@@ -16,7 +16,7 @@ app.config['MYSQL_DB'] = 'farmaciasguadalajara'
 mysql = MySQL(app)
 
 
-@app.route("/")
+@app.route("/home")
 def home():
     return render_template("views/home/home.html")
 
@@ -83,6 +83,14 @@ def register():
         msg = '¡Porfavor rellene el formulario!'
     return render_template('views/register/register.html', msg=msg)
     # return render_template("views/register/register.html")
+
+
+@app.route('/logout')
+def logout():
+    session.pop('loggedin', None)
+    session.pop('id', None)
+    session.pop('username', None)
+    return redirect(url_for('login'))
 
 
 if __name__ == '__main__':

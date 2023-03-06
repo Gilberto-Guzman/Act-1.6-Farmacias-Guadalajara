@@ -1,7 +1,8 @@
 <!-- NAVBAR -->
 <nav class="navbar navbar-expand-lg bg-body-tertiary">
     <div class="container">
-        <a class="navbar-brand" href="#"><span class="fs-3 fw-bold text-danger">Farmacias Guadalajara</span></a>
+        <a class="navbar-brand" href="{{ url_for('home') }}"><span class="fs-3 fw-bold text-danger">Farmacias
+                Guadalajara</span></a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -31,10 +32,16 @@
                         Mi Cuenta
                         {% endif %}
                     </button>
+                    {% if session.get('loggedin') == true %}
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item" href="{{ url_for('logout') }}">Cerrar Sesión</a>
+                    </div>
+                    {% else %}
                     <div class="dropdown-menu">
                         <a class="dropdown-item" href="{{ url_for('login') }}">Inicia Sesión</a>
                         <a class="dropdown-item" href="{{ url_for('register') }}">Registrate</a>
                     </div>
+                    {% endif %}
                 </div>
             </ul>
         </div>
