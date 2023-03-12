@@ -1,9 +1,7 @@
-from flask import Flask, Blueprint, render_template, request, redirect, url_for, session
-from flask_mysqldb import MySQL
+from flask import render_template, request, redirect, url_for, session
+from mysqlconnection import *
 import MySQLdb.cursors
 import re
-
-from mysqlconnection import *
 
 
 @app.route("/home")
@@ -75,8 +73,7 @@ def logout():
     return redirect(url_for('login'))
 
 
-# if __name__ == '__main__':
-#     app.run(debug=True)
-
 if __name__ == '__main__':
     app.run(host='0.0.0.0')
+# if __name__ == '__main__':
+#     app.run(debug=True)
