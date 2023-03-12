@@ -27,8 +27,6 @@ def login():
             'SELECT * FROM accounts WHERE username = % s AND password = % s', (username, password, ))
         account = cursor.fetchone()
         if account:
-            # loggedin = True
-            # app.config['loggedin'] = True
             session['loggedin'] = True
             session['id'] = account['id']
             session['username'] = account['username']
@@ -38,7 +36,6 @@ def login():
         else:
             msg = 'Usuario o contraseña incorrectos...'
     return render_template('views/login/login.html', msg=msg)
-    # return render_template('views/login/login.html')
 
 
 @app.route("/register", methods=['GET', 'POST'])
@@ -68,7 +65,6 @@ def register():
     elif request.method == 'POST':
         msg = '¡Porfavor rellene el formulario!'
     return render_template('views/register/register.html', msg=msg)
-    # return render_template("views/register/register.html")
 
 
 @app.route('/logout')
