@@ -1,3 +1,4 @@
+import datetime
 from flask import render_template, request, redirect, url_for, session
 from mysqlconnection import *
 import MySQLdb.cursors
@@ -83,17 +84,32 @@ def dashboard():
     return render_template('views/dashboard/dashboard.html')
 
 
-@app.route('/appointment')
+@app.route('/appointment', methods=['GET', 'POST'])
 def appointment():
-    if session.get('loggedin') == True:
-        return render_template('views/appointment/appointment.html')
-    else:
-        msg = '¡Para solicitar una cita necesitamos que inicies sesión!'
-        return render_template('views/login/login.html', msg=msg)
+    msg = ''
+    if request.method == 'POST' and 'name' in request.form and 'address' in request.form and 'phonenumber' in request.form and 'reasonofthevisit' in request.form and 'dateandtime' in request.form:
+
+        username = session['username']
+        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute(
+            'SELECT email FROM accounts WHERE username = % s', (username, ))
+        email = cursor.fetchone()['email']
+        name = request.form['name']
+        address = request.form['address']
+        phonenumber = request.form['phonenumber']
+        reasonofthevisit = request.form['reasonofthevisit']
+        dateandtime = request.form['dateandtime']
+
+        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute(
+            'INSERT INTO appointments VALUES (NULL, % s, % s, % s, % s, % s, % s, % s)', (username, email, name, address, phonenumber, reasonofthevisit, dateandtime, ))
+        mysql.connection.commit()
+        msg = '¡Se ha registrado su cita correctamente!'
+    return render_template('views/appointment/appointment.html', msg=msg)
+
 
 # if __name__ == '__main__':
 #    app.run(host='0.0.0.0')
-
 
 if __name__ == '__main__':
     app.run(debug=True)
