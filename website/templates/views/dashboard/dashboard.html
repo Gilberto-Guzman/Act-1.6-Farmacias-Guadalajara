@@ -1,0 +1,50 @@
+{% if session.get('loggedin') == true and session.get('username') == 'Administrador' and session.get('id') == -1%}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Farmacias Guadalajara</title>
+
+    {% include 'libraries/lib-css.html' %}
+
+</head>
+
+<body>
+
+    {% include 'tools/navbar.html' %}
+
+
+
+    {% include 'libraries/lib-js.html' %}
+
+</body>
+
+</html>
+{% else %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Farmacias Guadalajara</title>
+
+    {% include 'libraries/lib-css.html' %}
+</head>
+
+<body>
+
+    <h1 class="text-center font-weight-bold text-danger">Acceso Denegado</h1>
+    <h4 class="text-center font-weight-bold">Tu dirección IP es: {{ request.remote_addr }}</h4>
+
+    {% include 'libraries/lib-js.html' %}
+</body>
+
+</html>
+
+{% endif %}

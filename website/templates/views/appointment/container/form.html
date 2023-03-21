@@ -1,0 +1,43 @@
+<form action="{{ url_for('login') }}" method="post">
+    <div class="container text-center mt-5 mb-5">
+        <div class="row ">
+            <div class="col">
+
+                <div class="col-9 mx-auto mb-3">
+                    <label for="InputName" class="form-label">
+                        <h5>Nombre Completo</h5>
+                    </label>
+                    <input id="name" name="name" type="text" class="form-control">
+                </div>
+                <div class="col-9 mx-auto mb-3">
+                    <label for="InputAddress" class="form-label">
+                        <h5>Dirección</h5>
+                    </label>
+                    <input id="address" name="address" type="text" class="form-control">
+                </div>
+                <div class="col-9 mx-auto mb-3">
+                    <label for="InputPhoneNumber" class="form-label">
+                        <h5>Telefono</h5>
+                    </label>
+                    <input id="phonenumber" name="phonenumber" type="text" class="form-control">
+                </div>
+                <div class="col-9 mx-auto mb-3">
+                    <label for="InputReasonOfTheVisit" class="form-label">
+                        <h5>Motivo de la visita</h5>
+                    </label>
+                    <input id="reasonofthevisit" name="reasonofthevisit" type="text" class="form-control">
+                </div>
+                <input type="datetime-local" id="datetimepicker">
+
+
+                <div class="col-9 mx-auto mb-3">
+                    <label for="InputPassword" class="form-label">
+                        <h5>Fecha</h5>
+                    </label>
+                    <input id="password" name="password" type="password" class="form-control"><br>
+                    <button type="submit" class="btn btn-danger w-100" value="Sign In">Solicitar Cita</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

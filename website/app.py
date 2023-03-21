@@ -4,6 +4,11 @@ import MySQLdb.cursors
 import re
 
 
+@app.route("/")
+def index():
+    return render_template("views/home/home.html")
+
+
 @app.route("/home")
 def home():
     return render_template("views/home/home.html")
@@ -73,7 +78,22 @@ def logout():
     return redirect(url_for('login'))
 
 
-if __name__ == '__main__':
-    app.run(host='0.0.0.0')
+@app.route('/dashboard')
+def dashboard():
+    return render_template('views/dashboard/dashboard.html')
+
+
+@app.route('/appointment')
+def appointment():
+    if session.get('loggedin') == True:
+        return render_template('views/appointment/appointment.html')
+    else:
+        msg = '¡Para solicitar una cita necesitamos que inicies sesión!'
+        return render_template('views/login/login.html', msg=msg)
+
 # if __name__ == '__main__':
-#     app.run(debug=True)
+#    app.run(host='0.0.0.0')
+
+
+if __name__ == '__main__':
+    app.run(debug=True)
