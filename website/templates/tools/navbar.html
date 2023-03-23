@@ -36,7 +36,7 @@
                     {% if session.get('loggedin') == true and session.get('username') == 'Administrador' and
                     session.get('id') == -1%}
                     <div class="dropdown-menu">
-                        <a class="dropdown-item" href="{{ url_for('account') }}">Dashboard</a>
+                        <a class="dropdown-item" href="{{ url_for('account') }}">Cuentas</a>
                         <a class="dropdown-item" href="{{ url_for('logout') }}">Cerrar Sesión</a>
                     </div>
                     {% endif %}
