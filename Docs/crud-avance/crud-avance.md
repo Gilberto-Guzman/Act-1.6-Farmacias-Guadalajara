@@ -6,7 +6,7 @@
 
 ### Repositorio.
 
-    https://github.com/Gilberto-Guzman/Farmacias-Guadalajara/tree/master/test-login
+    https://github.com/Gilberto-Guzman/Farmacias-Guadalajara
 
 ### Capturas.
 
@@ -22,6 +22,3 @@
 
 ![3](captures/3.jpeg)
 
-##### 4.-
-
-![4](captures/4.jpeg)
