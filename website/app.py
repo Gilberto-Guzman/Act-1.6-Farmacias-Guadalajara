@@ -1,4 +1,3 @@
-import datetime
 from flask import render_template, request, redirect, url_for, session
 from mysqlconnection import *
 import MySQLdb.cursors
@@ -35,8 +34,7 @@ def login():
             session['id'] = account['id']
             session['username'] = account['username']
             msg = '¡Ha iniciado sesión correctamente!'
-
-            return render_template('views/home/home.html', msg=msg)
+            return redirect('/home')
         else:
             msg = 'Usuario o contraseña incorrectos...'
     return render_template('views/login/login.html', msg=msg)
@@ -73,10 +71,11 @@ def register():
 
 @app.route('/logout')
 def logout():
+
     session.pop('loggedin', None)
     session.pop('id', None)
     session.pop('username', None)
-    return redirect(url_for('login'))
+    return redirect(url_for('home'))
 
 
 @app.route('/dashboard')
@@ -84,32 +83,81 @@ def dashboard():
     return render_template('views/dashboard/dashboard.html')
 
 
+# ---CUENTAS---
+@app.route('/account')
+def account():
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    cursor.execute('SELECT * FROM accounts')
+    accounts = cursor.fetchall()
+    cursor.close()
+
+    return render_template('views/account/account.html', accounts=accounts)
+
+
+@app.route('/deleteaccount', methods=['POST'])
+def deleteaccount():
+    user_id = request.form['user_id']
+
+    cursor = mysql.connection.cursor()
+    cursor.execute("DELETE FROM accounts WHERE id = %s", (user_id,))
+    mysql.connection.commit()
+
+    return redirect('/account')
+
+
+@app.route('/onclickeditaccount', methods=['POST'])
+def onclickeditaccount():
+    session['user_id'] = request.form['user_id']
+    session['editform'] = True
+    return redirect('/account')
+
+
+@app.route('/editaccount', methods=['POST'])
+def editaccount():
+    username = request.form['username']
+    password = request.form['password']
+    email = request.form['email']
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    cursor = mysql.connection.cursor()
+    cursor.execute("UPDATE accounts SET username=%s, password=%s, email=%s WHERE id=%s",
+                   (username, password, email, session['user_id'],))
+    mysql.connection.commit()
+
+    session.pop('editform', None)
+
+    return redirect('/account')
+
+
 @app.route('/appointment', methods=['GET', 'POST'])
 def appointment():
     msg = ''
-    if request.method == 'POST' and 'name' in request.form and 'address' in request.form and 'phonenumber' in request.form and 'reasonofthevisit' in request.form and 'dateandtime' in request.form:
+    if session.get('loggedin') == True:
+        if request.method == 'POST' and 'name' in request.form and 'address' in request.form and 'phonenumber' in request.form and 'reasonofthevisit' in request.form and 'dateandtime' in request.form:
 
-        username = session['username']
-        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-        cursor.execute(
-            'SELECT email FROM accounts WHERE username = % s', (username, ))
-        email = cursor.fetchone()['email']
-        name = request.form['name']
-        address = request.form['address']
-        phonenumber = request.form['phonenumber']
-        reasonofthevisit = request.form['reasonofthevisit']
-        dateandtime = request.form['dateandtime']
+            username = session['username']
+            cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+            cursor.execute(
+                'SELECT email FROM accounts WHERE username = % s', (username, ))
+            email = cursor.fetchone()['email']
+            name = request.form['name']
+            address = request.form['address']
+            phonenumber = request.form['phonenumber']
+            reasonofthevisit = request.form['reasonofthevisit']
+            dateandtime = request.form['dateandtime']
 
-        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-        cursor.execute(
-            'INSERT INTO appointments VALUES (NULL, % s, % s, % s, % s, % s, % s, % s)', (username, email, name, address, phonenumber, reasonofthevisit, dateandtime, ))
-        mysql.connection.commit()
-        msg = '¡Se ha registrado su cita correctamente!'
-    return render_template('views/appointment/appointment.html', msg=msg)
+            cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+            cursor.execute(
+                'INSERT INTO appointments VALUES (NULL, % s, % s, % s, % s, % s, % s, % s)', (username, email, name, address, phonenumber, reasonofthevisit, dateandtime, ))
+            mysql.connection.commit()
+            msg = '¡Se ha registrado su cita correctamente!'
+        return render_template('views/appointment/appointment.html', msg=msg)
+    else:
+        return redirect('/login')
 
 
 # if __name__ == '__main__':
 #    app.run(host='0.0.0.0')
+
 
 if __name__ == '__main__':
     app.run(debug=True)
