@@ -1,7 +1,9 @@
-from flask import render_template, request, redirect, url_for, session
+import io
+from flask import Response, render_template, request, redirect, url_for, session
 from mysqlconnection import *
 import MySQLdb.cursors
 import re
+import csv
 
 
 @app.route("/")
@@ -71,7 +73,6 @@ def register():
 
 @app.route('/logout')
 def logout():
-
     session.pop('loggedin', None)
     session.pop('id', None)
     session.pop('username', None)
@@ -97,7 +98,6 @@ def account():
 @app.route('/deleteaccount', methods=['POST'])
 def deleteaccount():
     user_id = request.form['user_id']
-
     cursor = mysql.connection.cursor()
     cursor.execute("DELETE FROM accounts WHERE id = %s", (user_id,))
     mysql.connection.commit()
@@ -112,20 +112,66 @@ def onclickeditaccount():
     return redirect('/account')
 
 
+@app.route('/onclickecreateaccount', methods=['GET', 'POST'])
+def onclickecreateaccount():
+    session['createform'] = True
+    return redirect('/account')
+
+
 @app.route('/editaccount', methods=['POST'])
 def editaccount():
+    id = request.form['id']
     username = request.form['username']
     password = request.form['password']
     email = request.form['email']
-    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    # cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
     cursor = mysql.connection.cursor()
-    cursor.execute("UPDATE accounts SET username=%s, password=%s, email=%s WHERE id=%s",
-                   (username, password, email, session['user_id'],))
+    cursor.execute("UPDATE accounts SET id =%s, username=%s, password=%s, email=%s WHERE id=%s",
+                   (id, username, password, email, session['user_id'],))
     mysql.connection.commit()
 
-    session.pop('editform', None)
+    session['editform'] = False
 
     return redirect('/account')
+
+
+@app.route('/createaccount', methods=['GET', 'POST'])
+def createaccount():
+    id = request.form['id']
+    username = request.form['username']
+    password = request.form['password']
+    email = request.form['email']
+    # cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    cursor = mysql.connection.cursor()
+    cursor.execute(
+        'INSERT INTO accounts VALUES (%s, % s, % s, % s)', (id, username, password, email, ))
+    mysql.connection.commit()
+
+    session['createform'] = False
+
+    return redirect('/account')
+
+
+@app.route('/mysqltocsv')
+def mysqltocsv():
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    cursor.execute('SELECT id, username, password, email FROM accounts')
+    accounts = cursor.fetchall()
+
+    csv_file = io.StringIO()
+
+    writer = csv.writer(csv_file)
+
+    writer.writerow(['ID', 'Usuario', 'Contrasena', 'Correo Electronico'])
+
+    for row in accounts:
+        writer.writerow([row['id'], row['username'],
+                        row['password'], row['email']])
+
+    response = Response(csv_file.getvalue(), mimetype='text/csv')
+    response.headers.set('Content-Disposition',
+                         'attachment', filename='accounts.csv')
+    return response
 
 
 @app.route('/appointment', methods=['GET', 'POST'])
@@ -156,7 +202,7 @@ def appointment():
 
 
 # if __name__ == '__main__':
-#    app.run(host='0.0.0.0')
+#     app.run(host='0.0.0.0')
 
 
 if __name__ == '__main__':

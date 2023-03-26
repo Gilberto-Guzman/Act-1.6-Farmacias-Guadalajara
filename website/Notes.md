@@ -7,11 +7,14 @@
     pip install flask_sqlalchemy
     pip install flask-login
     pip install flask-mysqldb
+    pip install csv
 
 ### comandos Utilizados
 
     python3 app.py
     python.exe -m pip install --upgrade pip
+    python -m pip install --upgrade pip
+    python -m pip install --upgrade python
 
 ### MYSQL Linux
 

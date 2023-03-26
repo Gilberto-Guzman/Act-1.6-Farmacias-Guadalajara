@@ -1,0 +1,10 @@
+<br>
+<h1 class="text-center font-weight-bold">Gestor De Cuentas</h1>
+<br>
+{% if session.get('editform') == false and session.get('createform') == false %}
+<div class="text-center">
+    <a href="{{ url_for('onclickecreateaccount') }}"><button type="button" class="btn btn-danger">Crear
+            Usuario</button></a>
+    <a href="{{ url_for('mysqltocsv') }}"><button type="button" class="btn btn-danger">Exportar CSV</button></a>
+</div>
+{% endif %}

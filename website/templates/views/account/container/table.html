@@ -1,57 +1,86 @@
-<table class="table text-center">
-    <thead>
-        <tr>
-            <th scope="col">ID</th>
-            <th scope="col">Usuario</th>
-            <th scope="col">Contraseña</th>
-            <th scope="col">Correo Electronico</th>
-            <th scope="col">Opciones</th>
-        </tr>
-    </thead>
-    <tbody>
+<div class="table-responsive">
+    <table class="table text-center">
+        <thead>
+            <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Usuario</th>
+                <th scope="col">Contraseña</th>
+                <th scope="col">Correo Electronico</th>
+                <th scope="col">Opciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if session.get('editform') == true %}
+            <div class="col-9 mx-auto mb-3">
+                <form action="{{ url_for('editaccount') }}" method="POST">
+                    <label for="InputId" class="form-label">
+                        <h5>Identificador</h5>
+                    </label>
+                    <input id="id" name="id" type="text" class="form-control">
+                    <label for="InputUsername" class="form-label">
+                        <h5>Usuario</h5>
+                    </label>
+                    <input id="username" name="username" type="text" class="form-control">
+                    <label for="InputEmail" class="form-label">
+                        <h5>Correo Electronico</h5>
+                    </label>
+                    <input id="email" name="email" type="text" class="form-control">
+                    <label for="InputPassword" class="form-label">
+                        <h5>Contraseña</h5>
+                    </label>
+                    <input id="password" name="password" type="password" class="form-control"><br><br>
 
-        {% if session.get('editform') == true %}
-        <div class="col-9 mx-auto mb-3">
-            <form action="{{ url_for('editaccount') }}" method="POST">
-                <label for="InputUsername" class="form-label">
-                    <h5>Usuario</h5>
-                </label>
-                <input id="username" name="username" type="text" class="form-control">
-                <label for="InputEmail" class="form-label">
-                    <h5>Correo Electronico</h5>
-                </label>
-                <input id="email" name="email" type="text" class="form-control">
-                <label for="InputPassword" class="form-label">
-                    <h5>Contraseña</h5>
-                </label>
-                <input id="password" name="password" type="password" class="form-control"><br><br>
-                <button type="submit" class="btn btn-danger w-100" value="Changes">Actualizar Cambios</button>
-            </form>
-        </div>
-        {% endif %}
+                    <button type="submit" class="btn btn-danger w-100" value="Changes">Actualizar Cambios</button>
+                </form>
+            </div>
+            {% elif session.get('createform') == true %}
+            <div class="col-9 mx-auto mb-3">
+                <form action="{{ url_for('createaccount') }}" method="POST">
+                    <label for="InputId" class="form-label">
+                        <h5>Identificador</h5>
+                    </label>
+                    <input id="id" name="id" type="text" class="form-control">
+                    <label for="InputUsername" class="form-label">
+                        <h5>Usuario</h5>
+                    </label>
+                    <input id="username" name="username" type="text" class="form-control">
+                    <label for="InputEmail" class="form-label">
+                        <h5>Correo Electronico</h5>
+                    </label>
+                    <input id="email" name="email" type="text" class="form-control">
+                    <label for="InputPassword" class="form-label">
+                        <h5>Contraseña</h5>
+                    </label>
+                    <input id="password" name="password" type="password" class="form-control"><br><br>
 
-        {% for i in range(accounts|count) %}
-        <tr>
+                    <button type="submit" class="btn btn-danger w-100" value="Changes">Crear Cuenta</button>
+                </form>
+            </div>
+            {% endif %}
 
-            <th scope="row">{{ accounts[i]["id"] }}</th>
-            <td>{{ accounts[i]["username"] }}</td>
-            <td>{{ accounts[i]["password"] }}</td>
-            <td>{{ accounts[i]["email"] }}</td>
+            {% for i in range(accounts|count) %}
+            <tr>
 
-            <form action="{{ url_for('onclickeditaccount') }}" method="POST">
-                <input type="hidden" name="user_id" value="{{ accounts[i]['id'] }}">
-                <td>
-                    <button type="submit" class="btn btn-danger">Editar</button>
-                </td>
-            </form>
+                <th scope="row">{{ accounts[i]["id"] }}</th>
+                <td>{{ accounts[i]["username"] }}</td>
+                <td>{{ accounts[i]["password"] }}</td>
+                <td>{{ accounts[i]["email"] }}</td>
 
-            <form action="{{ url_for('deleteaccount') }}" method="POST">
-                <input type="hidden" name="user_id" value="{{ accounts[i]['id'] }}">
-                <td>
-                    <button type="submit" class="btn btn-danger">Eliminar</button>
-                </td>
-            </form>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+                <form action="{{ url_for('onclickeditaccount') }}" method="POST">
+                    <input type="hidden" name="user_id" value="{{ accounts[i]['id'] }}">
+                    <td>
+                        <button type="submit" class="btn btn-danger">Editar</button>
+                    </td>
+                </form>
+
+                <form action="{{ url_for('deleteaccount') }}" method="POST">
+                    <input type="hidden" name="user_id" value="{{ accounts[i]['id'] }}">
+                    <td>
+                        <button type="submit" class="btn btn-danger">Eliminar</button>
+                    </td>
+                </form>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
