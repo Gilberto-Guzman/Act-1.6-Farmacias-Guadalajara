@@ -43,7 +43,7 @@
 
                     {% if session.get('loggedin') == true %}
                     <div class="dropdown-menu">
-                        <a class="dropdown-item" href="{{ url_for('appointment') }}">Solicitar Cita</a>
+                        <a class="dropdown-item" href="{{ url_for('schedule') }}">Solicitar Cita</a>
                         <a class="dropdown-item" href="{{ url_for('logout') }}">Cerrar Sesión</a>
                     </div>
 

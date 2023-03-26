@@ -1,0 +1,48 @@
+<form action="{{ url_for('schedule') }}" method="post">
+    <div class="container text-center mt-5 mb-5">
+        <div class="row ">
+            <div class="msg">
+                <h1>{{ msg }}</h1><br><br>
+            </div>
+            <div class="col">
+                <div class="col-9 mx-auto mb-3">
+                    <label for="InputName" class="form-label">
+                        <h5>Nombre Completo</h5>
+                    </label>
+                    <input id="name" name="name" type="text" class="form-control">
+                </div>
+
+                <div class="col-9 mx-auto mb-3">
+                    <label for="InputAddress" class="form-label">
+                        <h5>Dirección</h5>
+                    </label>
+                    <input id="address" name="address" type="text" class="form-control">
+                </div>
+
+                <div class="col-9 mx-auto mb-3">
+                    <label for="InputPhoneNumber" class="form-label">
+                        <h5>Numero Telefonico</h5>
+                    </label>
+                    <input id="phonenumber" name="phonenumber" type="text" class="form-control">
+                </div>
+
+                <div class="col-9 mx-auto mb-3">
+                    <label for="InputReasonOfTheVisit" class="form-label">
+                        <h5>Motivo De La Visita</h5>
+                    </label>
+                    <input id="reasonofthevisit" name="reasonofthevisit" type="text" class="form-control">
+                </div>
+
+                <div class="col-9 mx-auto mb-3">
+                    <label for="InputDateAndTime" class="form-label">
+                        <h5>Fecha y hora</h5>
+                    </label>
+                    <input type="datetime-local" id="dateandtime" name="dateandtime" type="text"
+                        class="form-control"><br>
+
+                    <button type="submit" class="btn btn-danger w-100" value="Confirm Appointment">Agendar Cita</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

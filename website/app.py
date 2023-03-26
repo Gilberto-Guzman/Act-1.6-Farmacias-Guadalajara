@@ -173,9 +173,11 @@ def accountmysqltocsv():
                          'attachment', filename='accounts.csv')
     return response
 
+# --- Citas ---
 
-@app.route('/appointment', methods=['GET', 'POST'])
-def appointment():
+
+@app.route('/schedule', methods=['GET', 'POST'])
+def schedule():
     msg = ''
     if session.get('loggedin') == True:
         if request.method == 'POST' and 'name' in request.form and 'address' in request.form and 'phonenumber' in request.form and 'reasonofthevisit' in request.form and 'dateandtime' in request.form:
@@ -196,14 +198,111 @@ def appointment():
                 'INSERT INTO appointments VALUES (NULL, % s, % s, % s, % s, % s, % s, % s)', (username, email, name, address, phonenumber, reasonofthevisit, dateandtime, ))
             mysql.connection.commit()
             msg = '¡Se ha registrado su cita correctamente!'
-        return render_template('views/appointment/appointment.html', msg=msg)
+        return render_template('views/schedule/schedule.html', msg=msg)
     else:
         return redirect('/login')
 
 
+@app.route('/appointment')
+def appointment():
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    cursor.execute('SELECT * FROM appointments')
+    appointments = cursor.fetchall()
+    cursor.close()
+
+    return render_template('views/appointment/appointment.html', appointments=appointments)
+
+
+@app.route('/deleteappointment', methods=['POST'])
+def deleteappointment():
+    user_id = request.form['user_id']
+    cursor = mysql.connection.cursor()
+    cursor.execute("DELETE FROM appointments WHERE id = %s", (user_id,))
+    mysql.connection.commit()
+
+    return redirect('/appointment')
+
+
+@app.route('/onclickeditappointment', methods=['POST'])
+def onclickeditappointment():
+    session['user_id'] = request.form['user_id']
+    session['editform'] = True
+    return redirect('/appointment')
+
+
+@app.route('/onclickecreateappointment', methods=['GET', 'POST'])
+def onclickecreateappointment():
+    session['createform'] = True
+    return redirect('/appointment')
+
+
+@app.route('/editappointment', methods=['POST'])
+def editappointment():
+    id = request.form['id']
+    username = request.form['username']
+    email = request.form['email']
+    name = request.form['name']
+    address = request.form['address']
+    phonenumber = request.form['phonenumber']
+    reasonofthevisit = request.form['reasonofthevisit']
+    dateandtime = request.form['dateandtime']
+
+    # cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    cursor = mysql.connection.cursor()
+    cursor.execute("UPDATE appointments SET id =%s, username=%s, email=%s, name=%s, address=%s, phonenumber=%s, reasonofthevisit=%s, dateandtime=%s WHERE id=%s",
+                   (id, username, email, name, address, phonenumber, reasonofthevisit, dateandtime, session['user_id'],))
+    mysql.connection.commit()
+
+    session.pop('editform', None)
+    return redirect('/appointment')
+
+
+@app.route('/createappointment', methods=['GET', 'POST'])
+def createappointment():
+    id = request.form['id']
+    username = request.form['username']
+    email = request.form['email']
+    name = request.form['name']
+    address = request.form['address']
+    phonenumber = request.form['phonenumber']
+    reasonofthevisit = request.form['reasonofthevisit']
+    dateandtime = request.form['dateandtime']
+    # cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    cursor = mysql.connection.cursor()
+    cursor.execute(
+        'INSERT INTO appointments VALUES (%s, % s, % s, % s, %s, % s, % s, % s)', (id, username, email, name, address, phonenumber, reasonofthevisit, dateandtime))
+    mysql.connection.commit()
+
+    session.pop('createform', None)
+
+    return redirect('/appointment')
+
+
+@app.route('/appointmentmysqltocsv')
+def appointmentmysqltocsv():
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    cursor.execute(
+        'SELECT id, username, email, name, address, phonenumber, reasonofthevisit, dateandtime FROM appointments')
+    accounts = cursor.fetchall()
+
+    csv_file = io.StringIO()
+
+    writer = csv.writer(csv_file)
+
+    writer.writerow(['ID', 'Usuario', 'Correo Electronico', 'Nombre Completo',
+                    'Direccion', 'Numero Telefonico', 'Motivo de La visita', 'Fecha y Hora'])
+
+    for row in accounts:
+        writer.writerow([row['id'], row['username'], row['email'], row['name'],
+                        row['address'], row['phonenumber'], row['reasonofthevisit'], row['dateandtime']])
+
+    response = Response(csv_file.getvalue(), mimetype='text/csv')
+    response.headers.set('Content-Disposition',
+                         'attachment', filename='appointments.csv')
+    return response
+
+
 # if __name__ == '__main__':
 #     app.run(host='0.0.0.0')
-
-
 if __name__ == '__main__':
     app.run(debug=True)
