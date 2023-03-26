@@ -1,5 +1,5 @@
 import io
-from flask import Response, render_template, request, redirect, send_file, url_for, session
+from flask import Response, render_template, request, redirect, url_for, session
 from mysqlconnection import *
 import MySQLdb.cursors
 import re
@@ -130,7 +130,7 @@ def editaccount():
                    (id, username, password, email, session['user_id'],))
     mysql.connection.commit()
 
-    session['editform'] = False
+    session.pop('editform', None)
 
     return redirect('/account')
 
@@ -147,13 +147,13 @@ def createaccount():
         'INSERT INTO accounts VALUES (%s, % s, % s, % s)', (id, username, password, email, ))
     mysql.connection.commit()
 
-    session['createform'] = False
+    session.pop('createform', None)
 
     return redirect('/account')
 
 
-@app.route('/mysqltocsv')
-def mysqltocsv():
+@app.route('/accountmysqltocsv')
+def accountmysqltocsv():
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
     cursor.execute('SELECT id, username, password, email FROM accounts')
     accounts = cursor.fetchall()
