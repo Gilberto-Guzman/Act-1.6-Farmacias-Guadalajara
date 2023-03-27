@@ -87,96 +87,105 @@ def dashboard():
 # ---CUENTAS---
 @app.route('/account')
 def account():
-    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    cursor.execute('SELECT * FROM accounts')
-    accounts = cursor.fetchall()
-    cursor.close()
+    if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
+        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute('SELECT * FROM accounts')
+        accounts = cursor.fetchall()
+        cursor.close()
+        return render_template('views/account/account.html', accounts=accounts)
+    else:
+        return redirect('/home')
 
-    return render_template('views/account/account.html', accounts=accounts)
 
-
-@app.route('/deleteaccount', methods=['POST'])
+@app.route('/deleteaccount', methods=['GET', 'POST'])
 def deleteaccount():
-    user_id = request.form['user_id']
-    cursor = mysql.connection.cursor()
-    cursor.execute("DELETE FROM accounts WHERE id = %s", (user_id,))
-    mysql.connection.commit()
+    if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
+        user_id = request.form['user_id']
+        cursor = mysql.connection.cursor()
+        cursor.execute("DELETE FROM accounts WHERE id = %s", (user_id,))
+        mysql.connection.commit()
+        return redirect('/account')
+    else:
+        return redirect('/home')
 
-    return redirect('/account')
 
-
-@app.route('/onclickeditaccount', methods=['POST'])
+@app.route('/onclickeditaccount', methods=['GET', 'POST'])
 def onclickeditaccount():
-    session['user_id'] = request.form['user_id']
-    session['editform'] = True
-    return redirect('/account')
+    if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
+        session['user_id'] = request.form['user_id']
+        session['editform'] = True
+        return redirect('/account')
+    else:
+        return redirect('/home')
 
 
 @app.route('/onclickecreateaccount', methods=['GET', 'POST'])
 def onclickecreateaccount():
-    session['createform'] = True
-    return redirect('/account')
+    if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
+        session['createform'] = True
+        return redirect('/account')
+    else:
+        return redirect('/home')
 
 
-@app.route('/editaccount', methods=['POST'])
+@app.route('/editaccount', methods=['GET', 'POST'])
 def editaccount():
-    id = request.form['id']
-    username = request.form['username']
-    password = request.form['password']
-    email = request.form['email']
-    # cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    cursor = mysql.connection.cursor()
-    cursor.execute("UPDATE accounts SET id =%s, username=%s, password=%s, email=%s WHERE id=%s",
-                   (id, username, password, email, session['user_id'],))
-    mysql.connection.commit()
+    if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
+        id = request.form['id']
+        username = request.form['username']
+        password = request.form['password']
+        email = request.form['email']
+        # cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor = mysql.connection.cursor()
+        cursor.execute("UPDATE accounts SET id =%s, username=%s, password=%s, email=%s WHERE id=%s",
+                       (id, username, password, email, session['user_id'],))
+        mysql.connection.commit()
+        session.pop('editform', None)
+        return redirect('/account')
+    else:
+        return redirect('/home')
 
-    session.pop('editform', None)
 
-    return redirect('/account')
-
-
-@app.route('/createaccount', methods=['GET', 'POST'])
+@ app.route('/createaccount', methods=['GET', 'POST'])
 def createaccount():
-    id = request.form['id']
-    username = request.form['username']
-    password = request.form['password']
-    email = request.form['email']
-    # cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    cursor = mysql.connection.cursor()
-    cursor.execute(
-        'INSERT INTO accounts VALUES (%s, % s, % s, % s)', (id, username, password, email, ))
-    mysql.connection.commit()
+    if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
+        id = request.form['id']
+        username = request.form['username']
+        password = request.form['password']
+        email = request.form['email']
+        # cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor = mysql.connection.cursor()
+        cursor.execute(
+            'INSERT INTO accounts VALUES (%s, % s, % s, % s)', (id, username, password, email, ))
+        mysql.connection.commit()
+        session.pop('createform', None)
+        return redirect('/account')
+    else:
+        return redirect('/home')
 
-    session.pop('createform', None)
 
-    return redirect('/account')
-
-
-@app.route('/accountmysqltocsv')
+@ app.route('/accountmysqltocsv')
 def accountmysqltocsv():
-    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    cursor.execute('SELECT id, username, password, email FROM accounts')
-    accounts = cursor.fetchall()
+    if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
+        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute('SELECT id, username, password, email FROM accounts')
+        accounts = cursor.fetchall()
+        csv_file = io.StringIO()
+        writer = csv.writer(csv_file)
+        writer.writerow(['ID', 'Usuario', 'Contrasena', 'Correo Electronico'])
+        for row in accounts:
+            writer.writerow([row['id'], row['username'],
+                            row['password'], row['email']])
+        response = Response(csv_file.getvalue(), mimetype='text/csv')
+        response.headers.set('Content-Disposition',
+                             'attachment', filename='accounts.csv')
+        return response
+    else:
+        return redirect('/home')
 
-    csv_file = io.StringIO()
-
-    writer = csv.writer(csv_file)
-
-    writer.writerow(['ID', 'Usuario', 'Contrasena', 'Correo Electronico'])
-
-    for row in accounts:
-        writer.writerow([row['id'], row['username'],
-                        row['password'], row['email']])
-
-    response = Response(csv_file.getvalue(), mimetype='text/csv')
-    response.headers.set('Content-Disposition',
-                         'attachment', filename='accounts.csv')
-    return response
 
 # --- Citas ---
-
-
-@app.route('/schedule', methods=['GET', 'POST'])
+@ app.route('/schedule', methods=['GET', 'POST'])
 def schedule():
     msg = ''
     if session.get('loggedin') == True:
@@ -200,109 +209,122 @@ def schedule():
             msg = '¡Se ha registrado su cita correctamente!'
         return render_template('views/schedule/schedule.html', msg=msg)
     else:
-        return redirect('/login')
+        return redirect('/home')
 
 
-@app.route('/appointment')
+@ app.route('/appointment')
 def appointment():
-    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    cursor.execute('SELECT * FROM appointments')
-    appointments = cursor.fetchall()
-    cursor.close()
+    if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
+        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute('SELECT * FROM appointments')
+        appointments = cursor.fetchall()
+        cursor.close()
+        return render_template('views/appointment/appointment.html', appointments=appointments)
+    else:
+        return redirect('/home')
 
-    return render_template('views/appointment/appointment.html', appointments=appointments)
 
-
-@app.route('/deleteappointment', methods=['POST'])
+@ app.route('/deleteappointment', methods=['GET', 'POST'])
 def deleteappointment():
-    user_id = request.form['user_id']
-    cursor = mysql.connection.cursor()
-    cursor.execute("DELETE FROM appointments WHERE id = %s", (user_id,))
-    mysql.connection.commit()
+    if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
+        user_id = request.form['user_id']
+        cursor = mysql.connection.cursor()
+        cursor.execute("DELETE FROM appointments WHERE id = %s", (user_id,))
+        mysql.connection.commit()
+        return redirect('/appointment')
+    else:
+        return redirect('/home')
 
-    return redirect('/appointment')
 
-
-@app.route('/onclickeditappointment', methods=['POST'])
+@ app.route('/onclickeditappointment', methods=['GET', 'POST'])
 def onclickeditappointment():
-    session['user_id'] = request.form['user_id']
-    session['editform'] = True
-    return redirect('/appointment')
+    if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
+        session['user_id'] = request.form['user_id']
+        session['editform'] = True
+        return redirect('/appointment')
+    else:
+        return redirect('/home')
 
 
-@app.route('/onclickecreateappointment', methods=['GET', 'POST'])
+@ app.route('/onclickecreateappointment', methods=['GET', 'POST'])
 def onclickecreateappointment():
-    session['createform'] = True
-    return redirect('/appointment')
+    if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
+        session['createform'] = True
+        return redirect('/appointment')
+    else:
+        return redirect('/home')
 
 
-@app.route('/editappointment', methods=['POST'])
+@ app.route('/editappointment', methods=['GET', 'POST'])
 def editappointment():
-    id = request.form['id']
-    username = request.form['username']
-    email = request.form['email']
-    name = request.form['name']
-    address = request.form['address']
-    phonenumber = request.form['phonenumber']
-    reasonofthevisit = request.form['reasonofthevisit']
-    dateandtime = request.form['dateandtime']
+    if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
+        id = request.form['id']
+        username = request.form['username']
+        email = request.form['email']
+        name = request.form['name']
+        address = request.form['address']
+        phonenumber = request.form['phonenumber']
+        reasonofthevisit = request.form['reasonofthevisit']
+        dateandtime = request.form['dateandtime']
+        # cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor = mysql.connection.cursor()
+        cursor.execute("UPDATE appointments SET id =%s, username=%s, email=%s, name=%s, address=%s, phonenumber=%s, reasonofthevisit=%s, dateandtime=%s WHERE id=%s",
+                       (id, username, email, name, address, phonenumber, reasonofthevisit, dateandtime, session['user_id'],))
+        mysql.connection.commit()
+        session.pop('editform', None)
+        return redirect('/appointment')
+    else:
+        return redirect('/home')
 
-    # cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    cursor = mysql.connection.cursor()
-    cursor.execute("UPDATE appointments SET id =%s, username=%s, email=%s, name=%s, address=%s, phonenumber=%s, reasonofthevisit=%s, dateandtime=%s WHERE id=%s",
-                   (id, username, email, name, address, phonenumber, reasonofthevisit, dateandtime, session['user_id'],))
-    mysql.connection.commit()
 
-    session.pop('editform', None)
-    return redirect('/appointment')
-
-
-@app.route('/createappointment', methods=['GET', 'POST'])
+@ app.route('/createappointment', methods=['GET', 'POST'])
 def createappointment():
-    id = request.form['id']
-    username = request.form['username']
-    email = request.form['email']
-    name = request.form['name']
-    address = request.form['address']
-    phonenumber = request.form['phonenumber']
-    reasonofthevisit = request.form['reasonofthevisit']
-    dateandtime = request.form['dateandtime']
-    # cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    cursor = mysql.connection.cursor()
-    cursor.execute(
-        'INSERT INTO appointments VALUES (%s, % s, % s, % s, %s, % s, % s, % s)', (id, username, email, name, address, phonenumber, reasonofthevisit, dateandtime))
-    mysql.connection.commit()
+    if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
+        id = request.form['id']
+        username = request.form['username']
+        email = request.form['email']
+        name = request.form['name']
+        address = request.form['address']
+        phonenumber = request.form['phonenumber']
+        reasonofthevisit = request.form['reasonofthevisit']
+        dateandtime = request.form['dateandtime']
+        # cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor = mysql.connection.cursor()
+        cursor.execute(
+            'INSERT INTO appointments VALUES (%s, % s, % s, % s, %s, % s, % s, % s)', (id, username, email, name, address, phonenumber, reasonofthevisit, dateandtime))
+        mysql.connection.commit()
+        session.pop('createform', None)
+        return redirect('/appointment')
+    else:
+        return redirect('/home')
 
-    session.pop('createform', None)
 
-    return redirect('/appointment')
-
-
-@app.route('/appointmentmysqltocsv')
+@ app.route('/appointmentmysqltocsv')
 def appointmentmysqltocsv():
-    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    cursor.execute(
-        'SELECT id, username, email, name, address, phonenumber, reasonofthevisit, dateandtime FROM appointments')
-    accounts = cursor.fetchall()
+    if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
+        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute(
+            'SELECT id, username, email, name, address, phonenumber, reasonofthevisit, dateandtime FROM appointments')
+        accounts = cursor.fetchall()
+        csv_file = io.StringIO()
+        writer = csv.writer(csv_file)
+        writer.writerow(['ID', 'Usuario', 'Correo Electronico', 'Nombre Completo',
+                        'Direccion', 'Numero Telefonico', 'Motivo de La visita', 'Fecha y Hora'])
+        for row in accounts:
+            writer.writerow([row['id'], row['username'], row['email'], row['name'],
+                            row['address'], row['phonenumber'], row['reasonofthevisit'], row['dateandtime']])
 
-    csv_file = io.StringIO()
-
-    writer = csv.writer(csv_file)
-
-    writer.writerow(['ID', 'Usuario', 'Correo Electronico', 'Nombre Completo',
-                    'Direccion', 'Numero Telefonico', 'Motivo de La visita', 'Fecha y Hora'])
-
-    for row in accounts:
-        writer.writerow([row['id'], row['username'], row['email'], row['name'],
-                        row['address'], row['phonenumber'], row['reasonofthevisit'], row['dateandtime']])
-
-    response = Response(csv_file.getvalue(), mimetype='text/csv')
-    response.headers.set('Content-Disposition',
-                         'attachment', filename='appointments.csv')
-    return response
+        response = Response(csv_file.getvalue(), mimetype='text/csv')
+        response.headers.set('Content-Disposition',
+                             'attachment', filename='appointments.csv')
+        return response
+    else:
+        return redirect('/home')
 
 
 # if __name__ == '__main__':
 #     app.run(host='0.0.0.0')
+
+
 if __name__ == '__main__':
     app.run(debug=True)
