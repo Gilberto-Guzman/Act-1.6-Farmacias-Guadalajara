@@ -50,10 +50,37 @@
     </div>
     {% else %}
     <div class="text-center">
-        <a href="{{ url_for('onclickecreateaccount') }}"><button type="button" class="btn btn-danger">Crear
+        <a href="{{ url_for('onclickecreateaccount') }}"><button type="button"
+                class="btn btn-danger">Crear
                 Usuario</button></a>
-        <a href="{{ url_for('accountmysqltocsv') }}"><button type="button" class="btn btn-danger">Exportar
-                CSV</button></a>
+        <!-- <a href="{{ url_for('accountmysqltocsv') }}"><button type="button"
+                class="btn btn-danger">Exportar
+                CSV</button></a> -->
+        <div class="btn-group">
+            <button type="button" class="btn btn-danger dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true"
+                aria-expanded="false">
+                Exportar Archivo
+            </button> <!-- Agregar esta etiqueta de cierre -->
+            <div class="dropdown-menu">
+                <a class="dropdown-item" href="{{ url_for('accountmysqltocsv') }}">CSV</a>
+                <a class="dropdown-item" href="{{ url_for('accountmysqltopdf') }}">PDF</a>
+            </div>
+        </div>
     </div>
+
+    <br>
+    <br>
+    <form action="{{ url_for('searchaccount') }}" method="POST">
+        <div class="input-group w-50 mx-auto d-flex">
+            <input type="search" name="searchaccount" class="form-control rounded" placeholder="" aria-label="Search"
+                aria-describedby="search-addon" />
+            <button type="submit" class="btn btn-outline-danger">Buscar</button>
+        </div>
+    </form>
+
+    </div>
+
+
+
     {% endif %}
 </tbody>

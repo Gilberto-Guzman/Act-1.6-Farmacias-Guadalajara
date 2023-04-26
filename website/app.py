@@ -1,9 +1,15 @@
 import io
-from flask import Response, render_template, request, redirect, url_for, session
+from flask import Response, make_response, render_template, request, redirect, url_for, session
 from mysqlconnection import *
 import MySQLdb.cursors
 import re
 import csv
+from reportlab.lib.pagesizes import letter
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.units import inch
+from reportlab.lib import colors
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
+from reportlab.lib.enums import TA_CENTER
 
 
 @app.route("/")
@@ -93,6 +99,27 @@ def account():
         accounts = cursor.fetchall()
         cursor.close()
         return render_template('views/account/account.html', accounts=accounts)
+
+    else:
+        return redirect('/home')
+
+
+@app.route('/searchaccount', methods=['GET', 'POST'])
+def searchaccount():
+    if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
+
+        searchaccount = request.form['searchaccount']
+        filtered_accounts = []
+
+        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute('SELECT * FROM accounts')
+        accounts = cursor.fetchall()
+
+        for account in accounts:
+            if searchaccount in str(account['id']) or searchaccount in account['username'] or searchaccount in account['password'] or searchaccount in account['email']:
+                filtered_accounts.append(account)
+
+        return render_template('views/account/account.html', accounts=filtered_accounts)
     else:
         return redirect('/home')
 
@@ -179,6 +206,61 @@ def accountmysqltocsv():
         response = Response(csv_file.getvalue(), mimetype='text/csv')
         response.headers.set('Content-Disposition',
                              'attachment', filename='accounts.csv')
+        return response
+    else:
+        return redirect('/home')
+
+
+@ app.route('/accountmysqltopdf')
+def accountmysqltopdf():
+    if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
+        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute('SELECT * FROM accounts')
+        data = cursor.fetchall()
+
+        # Crear un nuevo archivo PDF
+        filename = "accounts.pdf"
+        doc = SimpleDocTemplate(filename, pagesize=letter)
+        styles = getSampleStyleSheet()
+
+        # Crear una lista para los elementos del PDF
+        elements = []
+
+        # Definir estilo de encabezado
+        header_style = ParagraphStyle(
+            name="header", alignment=TA_CENTER, fontSize=24)
+
+        # Agregar un encabezado
+        elements.append(
+            Paragraph('Lista de cuentas<br/><br/><br/>', header_style))
+
+        # Agregar una tabla con los datos de la tabla "accounts"
+        t = Table([['ID', 'Usuario', 'Correo Electronico']] + [[account['id'],
+                  account['username'], account['email']] for account in data])
+        t.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, 0), colors.red),
+            ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
+            ('ALIGN', (0, 0), (-1, 0), 'CENTER'),
+            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+            ('FONTSIZE', (0, 0), (-1, 0), 14),
+            ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+            ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+            ('TEXTCOLOR', (0, 1), (-1, -1), colors.black),
+            ('ALIGN', (0, 1), (-1, -1), 'CENTER'),
+            ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
+            ('FONTSIZE', (0, 1), (-1, -1), 12),
+            ('BOTTOMPADDING', (0, 1), (-1, -1), 6),
+        ]))
+        elements.append(t)
+
+        doc.build(elements)
+
+        with open(filename, 'rb') as f:
+            pdf_data = f.read()
+
+        response = make_response(pdf_data)
+        response.headers['Content-Type'] = 'application/pdf'
+        response.headers['Content-Disposition'] = 'attachment; filename=accounts.pdf'
         return response
     else:
         return redirect('/home')
