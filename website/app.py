@@ -10,7 +10,8 @@ from reportlab.lib.units import inch
 from reportlab.lib import colors
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
 from reportlab.lib.enums import TA_CENTER
-
+from io import BytesIO
+from flask import make_response
 
 @app.route("/")
 def index():
@@ -211,16 +212,16 @@ def accountmysqltocsv():
         return redirect('/home')
 
 
-@ app.route('/accountmysqltopdf')
+@app.route('/accountmysqltopdf')
 def accountmysqltopdf():
     if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
         cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
         cursor.execute('SELECT * FROM accounts')
         data = cursor.fetchall()
 
-        # Crear un nuevo archivo PDF
-        filename = "accounts.pdf"
-        doc = SimpleDocTemplate(filename, pagesize=letter)
+        # Crear un nuevo archivo PDF en memoria
+        buffer = BytesIO()
+        doc = SimpleDocTemplate(buffer, pagesize=letter)
         styles = getSampleStyleSheet()
 
         # Crear una lista para los elementos del PDF
@@ -255,8 +256,8 @@ def accountmysqltopdf():
 
         doc.build(elements)
 
-        with open(filename, 'rb') as f:
-            pdf_data = f.read()
+        # Obtener el contenido del PDF en bytes
+        pdf_data = buffer.getvalue()
 
         response = make_response(pdf_data)
         response.headers['Content-Type'] = 'application/pdf'
