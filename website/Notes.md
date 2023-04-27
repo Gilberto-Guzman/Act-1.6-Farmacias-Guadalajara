@@ -8,6 +8,7 @@
     pip install flask-login
     pip install flask-mysqldb
     pip install csv
+    pip install reportlab
 
 ### comandos Utilizados
 
