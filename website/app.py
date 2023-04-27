@@ -13,6 +13,7 @@ from reportlab.lib.enums import TA_CENTER
 from io import BytesIO
 from flask import make_response
 
+
 @app.route("/")
 def index():
     return render_template("views/home/home.html")
@@ -142,6 +143,11 @@ def onclickeditaccount():
     if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
         session['user_id'] = request.form['user_id']
         session['editform'] = True
+
+        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute("SELECT * FROM accounts WHERE id = %s",
+                       (session['user_id'],))
+        session['user_information'] = cursor.fetchone()
         return redirect('/account')
     else:
         return redirect('/home')
@@ -151,6 +157,7 @@ def onclickeditaccount():
 def onclickecreateaccount():
     if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
         session['createform'] = True
+
         return redirect('/account')
     else:
         return redirect('/home')
