@@ -275,6 +275,52 @@ def accountmysqltopdf():
     else:
         return redirect('/home')
 
+
+# ---PATIENTS---
+@app.route('/patient')
+def patient():
+    if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
+        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute('SELECT * FROM patients')
+        patients = cursor.fetchall()
+        cursor.close()
+        return render_template('views/patient/patient.html', patients=patients)
+
+    else:
+        return redirect('/home')
+
+
+@app.route('/onclickecreatepatient', methods=['GET', 'POST'])
+def onclickecreatepatient():
+    if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
+        session['createform'] = True
+
+        return redirect('/patient')
+    else:
+        return redirect('/home')
+
+
+@ app.route('/createpatient', methods=['GET', 'POST'])
+def createpatient():
+    if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
+
+        id = request.form['id']
+        full_name = request.form['full_name']
+        date_of_birth = request.form['date_of_birth']
+        address = request.form['address']
+        phone_number = request.form['phone_number']
+        account_id = request.form['account_id']
+        # cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor = mysql.connection.cursor()
+        cursor.execute(
+            'INSERT INTO patients VALUES (%s, % s, % s, % s, % s, % s)', (id, full_name, date_of_birth, address, phone_number, account_id))
+        mysql.connection.commit()
+        session.pop('createform', None)
+        return redirect('/patient')
+    else:
+        return redirect('/home')
+
+
 # --- Citas ---
 
 

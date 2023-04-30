@@ -45,10 +45,10 @@ CREATE TABLE accounts (
 
 CREATE TABLE patients (
   `id` INT PRIMARY KEY AUTO_INCREMENT,
-  `first_name` VARCHAR(255) NOT NULL,
-  `last_name` VARCHAR(255) NOT NULL,
-  `date_of_birth` DATE NOT NULL,
-  `gender` ENUM('Male', 'Female') NOT NULL,
+  `full_name` VARCHAR(255) NOT NULL,
+  `date_of_birth` varchar(255) NOT NULL,
+  `address` VARCHAR(255) NOT NULL,
+  `phone_number` VARCHAR(255) NOT NULL,
   `account_id` INT NOT NULL,
   FOREIGN KEY (`account_id`) REFERENCES accounts(`id`)
 );

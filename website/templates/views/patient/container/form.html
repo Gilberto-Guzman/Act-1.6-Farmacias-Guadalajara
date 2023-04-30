@@ -1,0 +1,93 @@
+<br>
+<h1 class="text-center font-weight-bold">Gestor De Pacientes</h1>
+<br>
+<tbody>
+    {% if session.get('editform') == true %}
+    <div class="col-9 mx-auto mb-3">
+        <form action="{{ url_for('editaccount') }}" method="POST">
+            <label for="InputId" class="form-label">
+                <h5>Identificador</h5>
+            </label>
+            <input id="id" name="id" type="text" class="form-control"
+                value="{{ session['user_information']['id'] }}">
+            <label for=" InputUsername" class="form-label">
+                <h5>Usuario</h5>
+            </label>
+            <input id="username" name="username" type="text" class="form-control"
+                value="{{ session['user_information']['username'] }}">
+            <label for="InputPassword" class="form-label">
+                <h5>Contraseña</h5>
+            </label>
+            <input id="password" name="password" type="password" class="form-control"
+                value="{{ session['user_information']['password'] }}">
+            <label for="InputEmail" class="form-label">
+                <h5>Correo Electronico</h5>
+            </label>
+            <input id="email" name="email" type="text" class="form-control"
+                value="{{ session['user_information']['email'] }}"><br><br>
+            <button type="submit" class="btn btn-danger w-100" value="Changes">Actualizar Cambios</button>
+        </form>
+    </div>
+    {% elif session.get('createform') == true %}
+    <div class="col-9 mx-auto mb-3">
+        <form action="{{ url_for('createpatient') }}" method="POST">
+            <label for="InputId" class="form-label">
+                <h5>Identificador</h5>
+            </label>
+            <input id="id" name="id" type="text" class="form-control">
+            <label for="InputFull_name" class="form-label">
+                <h5>Nombre Completo</h5>
+            </label>
+            <input id="full_name" name="full_name" type="text" class="form-control">
+            <label for="InputDate_of_birth" class="form-label">
+                <h5>Fecha de Nacimiento</h5>
+            </label>
+            <input id="date_of_birth" name="date_of_birth" type="date" class="form-control">
+            <label for="InputAddress" class="form-label">
+                <h5>Dirección</h5>
+            </label>
+            <input id="address" name="address" type="address" class="form-control">
+            <label for="Inputphone_number" class="form-label">
+                <h5>Numero de Telefono</h5>
+            </label>
+            <input id="phone_number" name="phone_number" type="phone_number" class="form-control"><br><br>
+
+            <button type="submit" class="btn btn-danger w-100" value="Changes">Añadir Paciente</button>
+        </form>
+    </div>
+    {% else %}
+    <div class="text-center">
+        <a href="{{ url_for('onclickecreatepatient') }}"><button type="button"
+                class="btn btn-danger">Crear
+                Paciente</button></a>
+        <!-- <a href="{{ url_for('accountmysqltocsv') }}"><button type="button"
+                class="btn btn-danger">Exportar
+                CSV</button></a> -->
+        <div class="btn-group">
+            <button type="button" class="btn btn-danger dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true"
+                aria-expanded="false">
+                Exportar Archivo
+            </button> <!-- Agregar esta etiqueta de cierre -->
+            <div class="dropdown-menu">
+                <a class="dropdown-item" href="{{ url_for('accountmysqltocsv') }}">CSV</a>
+                <a class="dropdown-item" href="{{ url_for('accountmysqltopdf') }}">PDF</a>
+            </div>
+        </div>
+    </div>
+
+    <br>
+    <br>
+    <form action="{{ url_for('searchaccount') }}" method="POST">
+        <div class="input-group w-50 mx-auto d-flex">
+            <input type="search" name="searchaccount" class="form-control rounded" placeholder="" aria-label="Search"
+                aria-describedby="search-addon" />
+            <button type="submit" class="btn btn-outline-danger">Buscar</button>
+        </div>
+    </form>
+
+    </div>
+
+
+
+    {% endif %}
+</tbody>
