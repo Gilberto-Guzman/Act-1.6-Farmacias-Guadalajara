@@ -32,7 +32,7 @@ CREATE TABLE IF NOT EXISTS `appointments` (
 
 
 
-
+--BASE CHIDA--
 CREATE DATABASE test04;
 
 USE test04;

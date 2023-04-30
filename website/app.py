@@ -1,17 +1,25 @@
 import io
-from flask import Response, make_response, render_template, request, redirect, url_for, session
-from mysqlconnection import *
-import MySQLdb.cursors
 import re
 import csv
-from reportlab.lib.pagesizes import letter
-from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-from reportlab.lib.units import inch
+from flask import (
+    Response,
+    make_response,
+    render_template,
+    request,
+    redirect,
+    url_for,
+    session
+)
+from mysqlconnection import *
+import MySQLdb.cursors
+
 from reportlab.lib import colors
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
 from reportlab.lib.enums import TA_CENTER
+from reportlab.lib.pagesizes import letter
+from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
+from reportlab.platypus import Paragraph, SimpleDocTemplate, Table, TableStyle
+
 from io import BytesIO
-from flask import make_response
 
 
 @app.route("/")
@@ -226,23 +234,18 @@ def accountmysqltopdf():
         cursor.execute('SELECT * FROM accounts')
         data = cursor.fetchall()
 
-        # Crear un nuevo archivo PDF en memoria
         buffer = BytesIO()
         doc = SimpleDocTemplate(buffer, pagesize=letter)
         styles = getSampleStyleSheet()
 
-        # Crear una lista para los elementos del PDF
         elements = []
 
-        # Definir estilo de encabezado
         header_style = ParagraphStyle(
             name="header", alignment=TA_CENTER, fontSize=24)
 
-        # Agregar un encabezado
         elements.append(
             Paragraph('Lista de cuentas<br/><br/><br/>', header_style))
 
-        # Agregar una tabla con los datos de la tabla "accounts"
         t = Table([['ID', 'Usuario', 'Correo Electronico']] + [[account['id'],
                   account['username'], account['email']] for account in data])
         t.setStyle(TableStyle([
@@ -263,7 +266,6 @@ def accountmysqltopdf():
 
         doc.build(elements)
 
-        # Obtener el contenido del PDF en bytes
         pdf_data = buffer.getvalue()
 
         response = make_response(pdf_data)
@@ -273,8 +275,9 @@ def accountmysqltopdf():
     else:
         return redirect('/home')
 
-
 # --- Citas ---
+
+
 @ app.route('/schedule', methods=['GET', 'POST'])
 def schedule():
     msg = ''
@@ -314,109 +317,109 @@ def appointment():
         return redirect('/home')
 
 
-@ app.route('/deleteappointment', methods=['GET', 'POST'])
-def deleteappointment():
-    if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
-        user_id = request.form['user_id']
-        cursor = mysql.connection.cursor()
-        cursor.execute("DELETE FROM appointments WHERE id = %s", (user_id,))
-        mysql.connection.commit()
-        return redirect('/appointment')
-    else:
-        return redirect('/home')
+# @ app.route('/deleteappointment', methods=['GET', 'POST'])
+# def deleteappointment():
+#     if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
+#         user_id = request.form['user_id']
+#         cursor = mysql.connection.cursor()
+#         cursor.execute("DELETE FROM appointments WHERE id = %s", (user_id,))
+#         mysql.connection.commit()
+#         return redirect('/appointment')
+#     else:
+#         return redirect('/home')
 
 
-@ app.route('/onclickeditappointment', methods=['GET', 'POST'])
-def onclickeditappointment():
-    if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
-        session['user_id'] = request.form['user_id']
-        session['editform'] = True
-        return redirect('/appointment')
-    else:
-        return redirect('/home')
+# @ app.route('/onclickeditappointment', methods=['GET', 'POST'])
+# def onclickeditappointment():
+#     if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
+#         session['user_id'] = request.form['user_id']
+#         session['editform'] = True
+#         return redirect('/appointment')
+#     else:
+#         return redirect('/home')
 
 
-@ app.route('/onclickecreateappointment', methods=['GET', 'POST'])
-def onclickecreateappointment():
-    if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
-        session['createform'] = True
-        return redirect('/appointment')
-    else:
-        return redirect('/home')
+# @ app.route('/onclickecreateappointment', methods=['GET', 'POST'])
+# def onclickecreateappointment():
+#     if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
+#         session['createform'] = True
+#         return redirect('/appointment')
+#     else:
+#         return redirect('/home')
 
 
-@ app.route('/editappointment', methods=['GET', 'POST'])
-def editappointment():
-    if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
-        id = request.form['id']
-        username = request.form['username']
-        email = request.form['email']
-        name = request.form['name']
-        address = request.form['address']
-        phonenumber = request.form['phonenumber']
-        reasonofthevisit = request.form['reasonofthevisit']
-        dateandtime = request.form['dateandtime']
-        # cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-        cursor = mysql.connection.cursor()
-        cursor.execute("UPDATE appointments SET id =%s, username=%s, email=%s, name=%s, address=%s, phonenumber=%s, reasonofthevisit=%s, dateandtime=%s WHERE id=%s",
-                       (id, username, email, name, address, phonenumber, reasonofthevisit, dateandtime, session['user_id'],))
-        mysql.connection.commit()
-        session.pop('editform', None)
-        return redirect('/appointment')
-    else:
-        return redirect('/home')
+# @ app.route('/editappointment', methods=['GET', 'POST'])
+# def editappointment():
+#     if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
+#         id = request.form['id']
+#         username = request.form['username']
+#         email = request.form['email']
+#         name = request.form['name']
+#         address = request.form['address']
+#         phonenumber = request.form['phonenumber']
+#         reasonofthevisit = request.form['reasonofthevisit']
+#         dateandtime = request.form['dateandtime']
+#         # cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+#         cursor = mysql.connection.cursor()
+#         cursor.execute("UPDATE appointments SET id =%s, username=%s, email=%s, name=%s, address=%s, phonenumber=%s, reasonofthevisit=%s, dateandtime=%s WHERE id=%s",
+#                        (id, username, email, name, address, phonenumber, reasonofthevisit, dateandtime, session['user_id'],))
+#         mysql.connection.commit()
+#         session.pop('editform', None)
+#         return redirect('/appointment')
+#     else:
+#         return redirect('/home')
 
 
-@ app.route('/createappointment', methods=['GET', 'POST'])
-def createappointment():
-    if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
-        id = request.form['id']
-        username = request.form['username']
-        email = request.form['email']
-        name = request.form['name']
-        address = request.form['address']
-        phonenumber = request.form['phonenumber']
-        reasonofthevisit = request.form['reasonofthevisit']
-        dateandtime = request.form['dateandtime']
-        # cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-        cursor = mysql.connection.cursor()
-        cursor.execute(
-            'INSERT INTO appointments VALUES (%s, % s, % s, % s, %s, % s, % s, % s)', (id, username, email, name, address, phonenumber, reasonofthevisit, dateandtime))
-        mysql.connection.commit()
-        session.pop('createform', None)
-        return redirect('/appointment')
-    else:
-        return redirect('/home')
+# @ app.route('/createappointment', methods=['GET', 'POST'])
+# def createappointment():
+#     if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
+#         id = request.form['id']
+#         username = request.form['username']
+#         email = request.form['email']
+#         name = request.form['name']
+#         address = request.form['address']
+#         phonenumber = request.form['phonenumber']
+#         reasonofthevisit = request.form['reasonofthevisit']
+#         dateandtime = request.form['dateandtime']
+#         # cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+#         cursor = mysql.connection.cursor()
+#         cursor.execute(
+#             'INSERT INTO appointments VALUES (%s, % s, % s, % s, %s, % s, % s, % s)', (id, username, email, name, address, phonenumber, reasonofthevisit, dateandtime))
+#         mysql.connection.commit()
+#         session.pop('createform', None)
+#         return redirect('/appointment')
+#     else:
+#         return redirect('/home')
 
 
-@ app.route('/appointmentmysqltocsv')
-def appointmentmysqltocsv():
-    if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
-        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-        cursor.execute(
-            'SELECT id, username, email, name, address, phonenumber, reasonofthevisit, dateandtime FROM appointments')
-        accounts = cursor.fetchall()
-        csv_file = io.StringIO()
-        writer = csv.writer(csv_file)
-        writer.writerow(['ID', 'Usuario', 'Correo Electronico', 'Nombre Completo',
-                        'Direccion', 'Numero Telefonico', 'Motivo de La visita', 'Fecha y Hora'])
-        for row in accounts:
-            writer.writerow([row['id'], row['username'], row['email'], row['name'],
-                            row['address'], row['phonenumber'], row['reasonofthevisit'], row['dateandtime']])
+# @ app.route('/appointmentmysqltocsv')
+# def appointmentmysqltocsv():
+#     if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
+#         cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+#         cursor.execute(
+#             'SELECT id, username, email, name, address, phonenumber, reasonofthevisit, dateandtime FROM appointments')
+#         accounts = cursor.fetchall()
+#         csv_file = io.StringIO()
+#         writer = csv.writer(csv_file)
+#         writer.writerow(['ID', 'Usuario', 'Correo Electronico', 'Nombre Completo',
+#                         'Direccion', 'Numero Telefonico', 'Motivo de La visita', 'Fecha y Hora'])
+#         for row in accounts:
+#             writer.writerow([row['id'], row['username'], row['email'], row['name'],
+#                             row['address'], row['phonenumber'], row['reasonofthevisit'], row['dateandtime']])
 
-        response = Response(csv_file.getvalue(), mimetype='text/csv')
-        response.headers.set('Content-Disposition',
-                             'attachment', filename='appointments.csv')
-        return response
-    else:
-        return redirect('/home')
-
+#         response = Response(csv_file.getvalue(), mimetype='text/csv')
+#         response.headers.set('Content-Disposition',
+#                              'attachment', filename='appointments.csv')
+#         return response
+#     else:
+#         return redirect('/home')
 
 # if __name__ == '__main__':
 #     app.run(host='0.0.0.0')
 
 # if _name_ == '_main_':
 #   app.run(debug=True, port=4000, host='0.0.0.0')
+
 
 if __name__ == '__main__':
     app.run(debug=True)
