@@ -1,5 +1,5 @@
 <br>
-<h1 class="text-center font-weight-bold">Gestor De Pacientes</h1>
+<h1 class="text-center font-weight-bold">Gestor De Cuentas</h1>
 <br>
 <tbody>
     {% if session.get('editform') == true %}
@@ -30,52 +30,32 @@
     </div>
     {% elif session.get('createform') == true %}
     <div class="col-9 mx-auto mb-3">
-        <form action="{{ url_for('createpatient') }}" method="POST">
+        <form action="{{ url_for('createaccount') }}" method="POST">
             <label for="InputId" class="form-label">
                 <h5>Identificador</h5>
             </label>
             <input id="id" name="id" type="text" class="form-control">
-            <label for="InputFull_name" class="form-label">
-                <h5>Nombre Completo</h5>
+            <label for="InputUsername" class="form-label">
+                <h5>Usuario</h5>
             </label>
-            <input id="full_name" name="full_name" type="text" class="form-control">
-            <label for="InputDate_of_birth" class="form-label">
-                <h5>Fecha de Nacimiento</h5>
+            <input id="username" name="username" type="text" class="form-control">
+            <label for="InputEmail" class="form-label">
+                <h5>Correo Electronico</h5>
             </label>
-            <input id="date_of_birth" name="date_of_birth" type="date" class="form-control">
-            <label for="InputAddress" class="form-label">
-                <h5>Dirección</h5>
+            <input id="email" name="email" type="text" class="form-control">
+            <label for="InputPassword" class="form-label">
+                <h5>Contraseña</h5>
             </label>
-            <input id="address" name="address" type="address" class="form-control">
-            <label for="Inputphone_number" class="form-label">
-                <h5>Numero de Telefono</h5>
-            </label>
-            <input id="phone_number" name="phone_number" type="phone_number" class="form-control">
+            <input id="password" name="password" type="password" class="form-control"><br><br>
 
-
-            <label for="Inputphone_number" class="form-label">
-                <h5>Identificador de la Cuenta</h5>
-            </label>
-            <select class="form-select" aria-label="Default select example">
-                <!-- <option selected>Open this select menu</option> -->
-                <!-- <option value="1">One</option>
-                <option value="2">Two</option>
-                <option value="3">Three</option> -->
-                {% for i in range(patients|count) %}
-                <option>
-                    {{ patients[i]["full_name"] }}
-                </option>
-                {% endfor %}
-            </select><br><br>
-
-            <button type="submit" class="btn btn-danger w-100" value="Changes">Añadir Paciente</button>
+            <button type="submit" class="btn btn-danger w-100" value="Changes">Crear Cuenta</button>
         </form>
     </div>
     {% else %}
     <div class="text-center">
-        <a href="{{ url_for('onclickecreatepatient') }}"><button type="button"
+        <a href="{{ url_for('onclickecreateaccount') }}"><button type="button"
                 class="btn btn-danger">Crear
-                Paciente</button></a>
+                Usuario</button></a>
         <!-- <a href="{{ url_for('accountmysqltocsv') }}"><button type="button"
                 class="btn btn-danger">Exportar
                 CSV</button></a> -->

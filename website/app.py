@@ -276,6 +276,69 @@ def accountmysqltopdf():
         return redirect('/home')
 
 
+# ---DOCTORES---
+@app.route('/doctor')
+def doctor():
+    if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
+        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute('SELECT * FROM doctors')
+        doctors = cursor.fetchall()
+        cursor.close()
+        return render_template('views/doctor/doctor.html', doctors=doctors)
+    else:
+        return redirect('/home')
+
+
+@app.route('/deletedoctor', methods=['GET', 'POST'])
+def deletedoctor():
+    if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
+        user_id = request.form['user_id']
+        cursor = mysql.connection.cursor()
+        cursor.execute("DELETE FROM doctors WHERE id = %s", (user_id,))
+        mysql.connection.commit()
+        return redirect('/doctor')
+    else:
+        return redirect('/home')
+
+
+@app.route('/editdoctor', methods=['GET', 'POST'])
+def editdoctor():
+    if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
+        id = request.form['id']
+        fullname = request.form['fullname']
+        speciality = request.form['speciality']
+        address = request.form['address']
+        email = request.form['email']
+        phonenumber = request.form['phonenumber']
+
+        # cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor = mysql.connection.cursor()
+        cursor.execute("UPDATE accounts SET id =%s, fullname=%s, speciality=%s, address=%s, email=%s, phonenumber=%s WHERE id=%s",
+                       (id, fullname, speciality, address, email, phonenumber, session['user_id'],))
+        mysql.connection.commit()
+        session.pop('editform', None)
+        return redirect('/doctor')
+    else:
+        return redirect('/home')
+
+
+@app.route('/onclickeditdoctor', methods=['GET', 'POST'])
+def onclickeditdoctor():
+    if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
+        session['user_id'] = request.form['user_id']
+        session['editform'] = True
+
+        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute("SELECT * FROM doctors WHERE id = %s",
+                       (session['user_id'],))
+        session['user_information'] = cursor.fetchone()
+        return redirect('/doctor')
+    else:
+        return redirect('/home')
+
+# -------------------------------------------------------------------------------
+
+
 # ---PATIENTS---
 @app.route('/patient')
 def patient():
@@ -295,7 +358,12 @@ def onclickecreatepatient():
     if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
         session['createform'] = True
 
+        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        # cursor.execute("SELECT id FROM patients")
+        cursor.execute("SELECT * FROM patients")
+        session['pacientes'] = cursor.fetchone()
         return redirect('/patient')
+        # return session['pacientes'][1]
     else:
         return redirect('/home')
 
