@@ -134,6 +134,42 @@ def searchaccount():
         return redirect('/home')
 
 
+@app.route('/editaccount', methods=['GET', 'POST'])
+def editaccount():
+    if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
+        id = request.form['id']
+        username = request.form['username']
+        password = request.form['password']
+        email = request.form['email']
+        # cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor = mysql.connection.cursor()
+        cursor.execute("UPDATE accounts SET id =%s, username=%s, password=%s, email=%s WHERE id=%s",
+                       (id, username, password, email, session['user_id'],))
+        mysql.connection.commit()
+        session.pop('editform', None)
+        return redirect('/account')
+    else:
+        return redirect('/home')
+
+
+@ app.route('/createaccount', methods=['GET', 'POST'])
+def createaccount():
+    if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
+        id = request.form['id']
+        username = request.form['username']
+        password = request.form['password']
+        email = request.form['email']
+        # cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor = mysql.connection.cursor()
+        cursor.execute(
+            'INSERT INTO accounts VALUES (%s, % s, % s, % s)', (id, username, password, email, ))
+        mysql.connection.commit()
+        session.pop('createform', None)
+        return redirect('/account')
+    else:
+        return redirect('/home')
+
+
 @app.route('/deleteaccount', methods=['GET', 'POST'])
 def deleteaccount():
     if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
@@ -170,9 +206,6 @@ def onclickecreateaccount():
     else:
         return redirect('/home')
 
-
-@app.route('/editaccount', methods=['GET', 'POST'])
-def editaccount():
     if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
         id = request.form['id']
         username = request.form['username']
@@ -188,9 +221,6 @@ def editaccount():
     else:
         return redirect('/home')
 
-
-@ app.route('/createaccount', methods=['GET', 'POST'])
-def createaccount():
     if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
         id = request.form['id']
         username = request.form['username']
@@ -289,14 +319,22 @@ def doctor():
         return redirect('/home')
 
 
-@app.route('/deletedoctor', methods=['GET', 'POST'])
-def deletedoctor():
+@app.route('/searchdoctor', methods=['GET', 'POST'])
+def searchdoctor():
     if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
-        user_id = request.form['user_id']
-        cursor = mysql.connection.cursor()
-        cursor.execute("DELETE FROM doctors WHERE id = %s", (user_id,))
-        mysql.connection.commit()
-        return redirect('/doctor')
+
+        searchdoctor = request.form['searchdoctor']
+        filtered_doctors = []
+
+        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute('SELECT * FROM doctors')
+        doctors = cursor.fetchall()
+
+        for doctor in doctors:
+            if searchdoctor in str(doctor['id']) or searchdoctor in doctor['fullname'] or searchdoctor in doctor['speciality'] or searchdoctor in doctor['address'] or searchdoctor in doctor['email'] or searchdoctor in doctor['phonenumber']:
+                filtered_doctors.append(doctor)
+
+        return render_template('views/doctor/doctor.html', doctors=filtered_doctors)
     else:
         return redirect('/home')
 
@@ -313,10 +351,42 @@ def editdoctor():
 
         # cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
         cursor = mysql.connection.cursor()
-        cursor.execute("UPDATE accounts SET id =%s, fullname=%s, speciality=%s, address=%s, email=%s, phonenumber=%s WHERE id=%s",
+        cursor.execute("UPDATE doctors SET id =%s, fullname=%s, speciality=%s, address=%s, email=%s, phonenumber=%s WHERE id=%s",
                        (id, fullname, speciality, address, email, phonenumber, session['user_id'],))
         mysql.connection.commit()
         session.pop('editform', None)
+        return redirect('/doctor')
+    else:
+        return redirect('/home')
+
+
+@ app.route('/createdoctor', methods=['GET', 'POST'])
+def createdoctor():
+    if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
+        id = request.form['id']
+        fullname = request.form['fullname']
+        speciality = request.form['speciality']
+        address = request.form['address']
+        email = request.form['email']
+        phonenumber = request.form['phonenumber']
+        # cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor = mysql.connection.cursor()
+        cursor.execute(
+            'INSERT INTO doctors VALUES (%s, % s, % s, % s, % s, % s)', (id, fullname, speciality, address, email, phonenumber))
+        mysql.connection.commit()
+        session.pop('createform', None)
+        return redirect('/doctor')
+    else:
+        return redirect('/home')
+
+
+@app.route('/deletedoctor', methods=['GET', 'POST'])
+def deletedoctor():
+    if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
+        user_id = request.form['user_id']
+        cursor = mysql.connection.cursor()
+        cursor.execute("DELETE FROM doctors WHERE id = %s", (user_id,))
+        mysql.connection.commit()
         return redirect('/doctor')
     else:
         return redirect('/home')
@@ -333,6 +403,126 @@ def onclickeditdoctor():
                        (session['user_id'],))
         session['user_information'] = cursor.fetchone()
         return redirect('/doctor')
+    else:
+        return redirect('/home')
+
+    if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
+        id = request.form['id']
+        fullname = request.form['fullname']
+        speciality = request.form['speciality']
+        address = request.form['address']
+        email = request.form['email']
+        phonenumber = request.form['phonenumber']
+        # cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor = mysql.connection.cursor()
+        cursor.execute(
+            'INSERT INTO doctors VALUES (%s, % s, % s, % s, % s, % s)', (id, fullname, speciality, address, email, phonenumber))
+        mysql.connection.commit()
+        session.pop('createform', None)
+        return redirect('/doctor')
+    else:
+        return redirect('/home')
+
+
+@app.route('/onclickedcreatedoctor', methods=['GET', 'POST'])
+def onclickedcreatedoctor():
+    if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
+        session['createform'] = True
+
+        return redirect('/doctor')
+    else:
+        return redirect('/home')
+
+
+@ app.route('/doctormysqltocsv')
+def doctormysqltocsv():
+    if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
+        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute(
+            'SELECT id, fullname, speciality, address, email, phonenumber FROM doctors')
+        accounts = cursor.fetchall()
+        csv_file = io.StringIO()
+        writer = csv.writer(csv_file)
+        writer.writerow(['ID', 'Nombre Completo', 'Especialidad',
+                        'Direccion', 'Correo Electronico', 'Numero de Telefono'])
+        for row in accounts:
+            writer.writerow(
+                [
+                    row['id'],
+                    row['fullname'],
+                    row['speciality'],
+                    row['address'],
+                    row['email'],
+                    row['phonenumber']
+                ]
+            )
+        response = Response(csv_file.getvalue(), mimetype='text/csv')
+        response.headers.set('Content-Disposition',
+                             'attachment', filename='doctors.csv')
+        return response
+    else:
+        return redirect('/home')
+
+
+@app.route('/doctormysqltopdf')
+def doctormysqltopdf():
+    if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
+        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute('SELECT * FROM doctors')
+        data = cursor.fetchall()
+
+        buffer = BytesIO()
+        doc = SimpleDocTemplate(buffer, pagesize=letter)
+        styles = getSampleStyleSheet()
+
+        elements = []
+
+        header_style = ParagraphStyle(
+            name="header", alignment=TA_CENTER, fontSize=24)
+
+        elements.append(
+            Paragraph('Lista de doctores<br/><br/><br/>', header_style))
+
+        t = Table(
+            [[
+                'ID',
+                'Nombre Completo',
+                'Especialidad',
+                'Direccion',
+                'Correo Electronico',
+                'Numero de Telefono'
+            ]] + [[
+                doctor['id'],
+                doctor['fullname'],
+                doctor['speciality'],
+                doctor['address'],
+                doctor['email'],
+                doctor['phonenumber']]
+                for doctor in data])
+        t.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, 0), colors.red),
+            ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
+            ('ALIGN', (0, 0), (-1, 0), 'CENTER'),
+            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+            ('FONTSIZE', (0, 0), (-1, 0), 10),
+            ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+            ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+            ('TEXTCOLOR', (0, 1), (-1, -1), colors.black),
+            ('ALIGN', (0, 1), (-1, -1), 'CENTER'),
+            ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
+            ('FONTSIZE', (0, 1), (-1, -1), 9),
+            ('BOTTOMPADDING', (0, 1), (-1, -1), 6),
+        ]))
+        elements.append(t)
+
+        doc.build(elements)
+
+        pdf_data = buffer.getvalue()
+
+        response = make_response(pdf_data)
+        response.headers['Content-Type'] = 'application/pdf'
+        response.headers['Content-Disposition'] = 'attachment; filename=doctors.pdf'
+        return response
     else:
         return redirect('/home')
 
