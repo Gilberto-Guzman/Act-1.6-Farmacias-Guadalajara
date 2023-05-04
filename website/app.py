@@ -584,6 +584,8 @@ def onclickedcreatepatient():
     if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
         session['createform'] = True
 
+        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+
         return redirect('/patient')
     else:
         return redirect('/home')
@@ -711,6 +713,39 @@ def searchappointment():
                 filtered_appointments.append(appointment)
 
         return render_template('views/appointment/appointment.html', appointments=filtered_appointments)
+    else:
+        return redirect('/home')
+
+
+@ app.route('/createappointment', methods=['GET', 'POST'])
+def createappointment():
+    if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
+        id = request.form['id']
+        patientname = request.form['patientname']
+        dateandtime = request.form['dateandtime']
+        reasonofthevisit = request.form['reasonofthevisit']
+        fullnameandspecialitydoctor = request.form['fullnameandspecialitydoctor']
+        # cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor = mysql.connection.cursor()
+        cursor.execute(
+            'INSERT INTO appointments VALUES (%s, % s, % s, % s, % s)', (id, patientname, dateandtime, reasonofthevisit, fullnameandspecialitydoctor))
+        mysql.connection.commit()
+        session.pop('createform', None)
+        return redirect('/appointment')
+    else:
+        return redirect('/home')
+
+
+@ app.route('/onclickecreatappointment', methods=['GET', 'POST'])
+def onclickecreatappointment():
+    if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
+        session['createform'] = True
+
+        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute(
+            'SELECT `fullname`, `speciality` FROM `doctors`')
+        session['doctor_information'] = cursor.fetchall()
+        return redirect('/appointment')
     else:
         return redirect('/home')
 

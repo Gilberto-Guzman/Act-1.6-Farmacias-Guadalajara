@@ -1,5 +1,5 @@
 <br>
-<h1 class="text-center font-weight-bold">Gestor De Cuentas</h1>
+<h1 class="text-center font-weight-bold">Gestor De Citas</h1>
 <br>
 <tbody>
     {% if session.get('editform') == true %}
@@ -30,37 +30,44 @@
     </div>
     {% elif session.get('createform') == true %}
     <div class="col-9 mx-auto mb-3">
-        <form action="{{ url_for('createaccount') }}" method="POST">
+        <form action="{{ url_for('createappointment') }}" method="POST">
             <label for="InputId" class="form-label">
                 <h5>Identificador</h5>
             </label>
             <input id="id" name="id" type="text" class="form-control">
-            <label for="InputUsername" class="form-label">
-                <h5>Usuario</h5>
+            <label for="InputPatientname" class="form-label">
+                <h5>Paciente</h5>
             </label>
-            <input id="username" name="username" type="text" class="form-control">
-            <label for="InputEmail" class="form-label">
-                <h5>Correo Electronico</h5>
+            <input id="patientname" name="patientname" type="text" class="form-control">
+            <label for="InputDateandtime" class="form-label">
+                <h5>Fecha y Hora</h5>
             </label>
-            <input id="email" name="email" type="text" class="form-control">
-            <label for="InputPassword" class="form-label">
-                <h5>Contraseña</h5>
+            <input id="dateandtime" name="dateandtime" type="datetime-local" class="form-control">
+            <label for="InputReasonofthevisit" class="form-label">
+                <h5>Razón de la Visita</h5>
             </label>
-            <input id="password" name="password" type="password" class="form-control"><br><br>
+            <input id="reasonofthevisit" name="reasonofthevisit" type="text" class="form-control">
+            <h5>Doctor Asignado</h5>
+            <select class="form-select" id="fullnameandspecialitydoctor" name="fullnameandspecialitydoctor">
+                {% for doctor in session['doctor_information'] %}
+                    <option value="{{ doctor['fullname'] }} - {{ doctor['speciality'] }}">{{ doctor['fullname'] }} - {{ doctor['speciality'] }}</option>
+                {% endfor %}
+            </select>              
+            <br><br>
 
-            <button type="submit" class="btn btn-danger w-100" value="Changes">Crear Cuenta</button>
+            <button type="submit" class="btn btn-danger w-100" value="Changes">Crear Cita</button>
         </form>
     </div>
     {% else %}
     <div class="text-center">
-        <a href="{{ url_for('onclickecreateaccount') }}"><button type="button"
+        <a href="{{ url_for('onclickecreatappointment') }}"><button type="button"
                 class="btn btn-danger">Crear
-                Usuario</button></a>
+                Cita</button></a>
         <div class="btn-group">
             <button type="button" class="btn btn-danger dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true"
                 aria-expanded="false">
                 Exportar Archivo
-            </button> <!-- Agregar esta etiqueta de cierre -->
+            </button>
             <div class="dropdown-menu">
                 <a class="dropdown-item" href="{{ url_for('appointmentmysqltocsv') }}">CSV</a>
                 <a class="dropdown-item" href="{{ url_for('appointmentmysqltopdf') }}">PDF</a>
