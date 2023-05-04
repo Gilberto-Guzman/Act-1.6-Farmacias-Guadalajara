@@ -22,22 +22,22 @@ from reportlab.platypus import Paragraph, SimpleDocTemplate, Table, TableStyle
 from io import BytesIO
 
 
-@app.route("/")
+@ app.route("/")
 def index():
     return render_template("views/home/home.html")
 
 
-@app.route("/home")
+@ app.route("/home")
 def home():
     return render_template("views/home/home.html")
 
 
-@app.route("/contact")
+@ app.route("/contact")
 def contact():
     return render_template("views/contact/contact.html")
 
 
-@app.route("/login", methods=['GET', 'POST'])
+@ app.route("/login", methods=['GET', 'POST'])
 def login():
     msg = ''
     if request.method == 'POST' and 'username' in request.form and 'password' in request.form:
@@ -58,7 +58,7 @@ def login():
     return render_template('views/login/login.html', msg=msg)
 
 
-@app.route("/register", methods=['GET', 'POST'])
+@ app.route("/register", methods=['GET', 'POST'])
 def register():
     msg = ''
     if request.method == 'POST' and 'username' in request.form and 'password' in request.form and 'email' in request.form:
@@ -87,7 +87,7 @@ def register():
     return render_template('views/register/register.html', msg=msg)
 
 
-@app.route('/logout')
+@ app.route('/logout')
 def logout():
     session.pop('loggedin', None)
     session.pop('id', None)
@@ -95,13 +95,13 @@ def logout():
     return redirect(url_for('home'))
 
 
-@app.route('/dashboard')
+@ app.route('/dashboard')
 def dashboard():
     return render_template('views/dashboard/dashboard.html')
 
 
 # ---CUENTAS---
-@app.route('/account')
+@ app.route('/account')
 def account():
     if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
         cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
@@ -114,7 +114,7 @@ def account():
         return redirect('/home')
 
 
-@app.route('/searchaccount', methods=['GET', 'POST'])
+@ app.route('/searchaccount', methods=['GET', 'POST'])
 def searchaccount():
     if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
 
@@ -134,7 +134,7 @@ def searchaccount():
         return redirect('/home')
 
 
-@app.route('/editaccount', methods=['GET', 'POST'])
+@ app.route('/editaccount', methods=['GET', 'POST'])
 def editaccount():
     if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
         id = request.form['id']
@@ -170,7 +170,7 @@ def createaccount():
         return redirect('/home')
 
 
-@app.route('/deleteaccount', methods=['GET', 'POST'])
+@ app.route('/deleteaccount', methods=['GET', 'POST'])
 def deleteaccount():
     if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
         user_id = request.form['user_id']
@@ -182,7 +182,7 @@ def deleteaccount():
         return redirect('/home')
 
 
-@app.route('/onclickeditaccount', methods=['GET', 'POST'])
+@ app.route('/onclickeditaccount', methods=['GET', 'POST'])
 def onclickeditaccount():
     if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
         session['user_id'] = request.form['user_id']
@@ -197,7 +197,7 @@ def onclickeditaccount():
         return redirect('/home')
 
 
-@app.route('/onclickecreateaccount', methods=['GET', 'POST'])
+@ app.route('/onclickecreateaccount', methods=['GET', 'POST'])
 def onclickecreateaccount():
     if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
         session['createform'] = True
@@ -227,7 +227,7 @@ def accountmysqltocsv():
         return redirect('/home')
 
 
-@app.route('/accountmysqltopdf')
+@ app.route('/accountmysqltopdf')
 def accountmysqltopdf():
     if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
         cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
@@ -277,7 +277,7 @@ def accountmysqltopdf():
 
 
 # ---DOCTORES---
-@app.route('/doctor')
+@ app.route('/doctor')
 def doctor():
     if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
         cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
@@ -289,7 +289,7 @@ def doctor():
         return redirect('/home')
 
 
-@app.route('/searchdoctor', methods=['GET', 'POST'])
+@ app.route('/searchdoctor', methods=['GET', 'POST'])
 def searchdoctor():
     if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
 
@@ -309,7 +309,7 @@ def searchdoctor():
         return redirect('/home')
 
 
-@app.route('/editdoctor', methods=['GET', 'POST'])
+@ app.route('/editdoctor', methods=['GET', 'POST'])
 def editdoctor():
     if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
         id = request.form['id']
@@ -350,7 +350,7 @@ def createdoctor():
         return redirect('/home')
 
 
-@app.route('/deletedoctor', methods=['GET', 'POST'])
+@ app.route('/deletedoctor', methods=['GET', 'POST'])
 def deletedoctor():
     if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
         user_id = request.form['user_id']
@@ -362,7 +362,7 @@ def deletedoctor():
         return redirect('/home')
 
 
-@app.route('/onclickeditdoctor', methods=['GET', 'POST'])
+@ app.route('/onclickeditdoctor', methods=['GET', 'POST'])
 def onclickeditdoctor():
     if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
         session['user_id'] = request.form['user_id']
@@ -377,7 +377,7 @@ def onclickeditdoctor():
         return redirect('/home')
 
 
-@app.route('/onclickedcreatedoctor', methods=['GET', 'POST'])
+@ app.route('/onclickedcreatedoctor', methods=['GET', 'POST'])
 def onclickedcreatedoctor():
     if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
         session['createform'] = True
@@ -481,7 +481,7 @@ def doctormysqltopdf():
 
 
 # ---PACIENTES---
-@app.route('/patient')
+@ app.route('/patient')
 def patient():
     if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
         cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
@@ -493,7 +493,7 @@ def patient():
         return redirect('/home')
 
 
-@app.route('/searchpatient', methods=['GET', 'POST'])
+@ app.route('/searchpatient', methods=['GET', 'POST'])
 def searchpatient():
     if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
 
@@ -513,7 +513,7 @@ def searchpatient():
         return redirect('/home')
 
 
-@app.route('/editpatient', methods=['GET', 'POST'])
+@ app.route('/editpatient', methods=['GET', 'POST'])
 def editpatient():
     if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
         id = request.form['id']
@@ -552,7 +552,7 @@ def createpatient():
         return redirect('/home')
 
 
-@app.route('/deletepatient', methods=['GET', 'POST'])
+@ app.route('/deletepatient', methods=['GET', 'POST'])
 def deletepatient():
     if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
         user_id = request.form['user_id']
@@ -564,7 +564,7 @@ def deletepatient():
         return redirect('/home')
 
 
-@app.route('/onclickeditpatient', methods=['GET', 'POST'])
+@ app.route('/onclickeditpatient', methods=['GET', 'POST'])
 def onclickeditpatient():
     if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
         session['user_id'] = request.form['user_id']
@@ -579,7 +579,7 @@ def onclickeditpatient():
         return redirect('/home')
 
 
-@app.route('/onclickedcreatepatient', methods=['GET', 'POST'])
+@ app.route('/onclickedcreatepatient', methods=['GET', 'POST'])
 def onclickedcreatepatient():
     if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
         session['createform'] = True
@@ -678,10 +678,131 @@ def patientmysqltopdf():
     else:
         return redirect('/home')
 
-# -------------------------------------------------------------------------------
+# --------------------------------------------
 
 
 # --- Citas ---
+@ app.route('/appointment')
+def appointment():
+    if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
+        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute('SELECT * FROM appointments')
+        appointments = cursor.fetchall()
+        cursor.close()
+        return render_template('views/appointment/appointment.html', appointments=appointments)
+
+    else:
+        return redirect('/home')
+
+
+@ app.route('/searchappointment', methods=['GET', 'POST'])
+def searchappointment():
+    if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
+
+        searchappointment = request.form['searchappointment']
+        filtered_appointments = []
+
+        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute('SELECT * FROM appointments')
+        appointments = cursor.fetchall()
+
+        for appointment in appointments:
+            if searchappointment in str(appointment['id']) or searchappointment in appointment['patientname'] or searchappointment in appointment['dateandtime'] or searchappointment in appointment['reasonofthevisit'] or searchappointment in appointment['fullnameandspecialitydoctor']:
+                filtered_appointments.append(appointment)
+
+        return render_template('views/appointment/appointment.html', appointments=filtered_appointments)
+    else:
+        return redirect('/home')
+
+
+@ app.route('/appointmentmysqltocsv')
+def appointmentmysqltocsv():
+    if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
+        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute(
+            'SELECT id, patientname, dateandtime, reasonofthevisit, fullnameandspecialitydoctor FROM appointments')
+        appointments = cursor.fetchall()
+        csv_file = io.StringIO()
+        writer = csv.writer(csv_file)
+        writer.writerow(['ID', 'Paciente', 'Fecha y Hora',
+                        'Razon de la Visita', 'Doctor Asignado'])
+        for row in appointments:
+            writer.writerow(
+                [
+                    row['id'],
+                    row['patientname'],
+                    row['dateandtime'],
+                    row['reasonofthevisit'],
+                    row['fullnameandspecialitydoctor']
+                ]
+            )
+        response = Response(csv_file.getvalue(), mimetype='text/csv')
+        response.headers.set('Content-Disposition',
+                             'attachment', filename='appointments.csv')
+        return response
+    else:
+        return redirect('/home')
+
+
+@ app.route('/appointmentmysqltopdf')
+def appointmentmysqltopdf():
+    if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
+        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute('SELECT * FROM appointments')
+        data = cursor.fetchall()
+
+        buffer = BytesIO()
+        doc = SimpleDocTemplate(buffer, pagesize=letter)
+        styles = getSampleStyleSheet()
+
+        elements = []
+
+        header_style = ParagraphStyle(
+            name="header", alignment=TA_CENTER, fontSize=24)
+
+        elements.append(
+            Paragraph('Lista de Citas<br/><br/><br/>', header_style))
+
+        t = Table(
+            [[
+                'ID',
+                'Paciente',
+                'Fecha y Hora',
+                'Razon de la Visita',
+                'Doctor Asignado'
+            ]] + [[
+                doctor['id'],
+                doctor['patientname'],
+                doctor['dateandtime'],
+                doctor['reasonofthevisit'],
+                doctor['fullnameandspecialitydoctor']]
+                for doctor in data])
+        t.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, 0), colors.red),
+            ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
+            ('ALIGN', (0, 0), (-1, 0), 'CENTER'),
+            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+            ('FONTSIZE', (0, 0), (-1, 0), 10),
+            ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+            ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+            ('TEXTCOLOR', (0, 1), (-1, -1), colors.black),
+            ('ALIGN', (0, 1), (-1, -1), 'CENTER'),
+            ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
+            ('FONTSIZE', (0, 1), (-1, -1), 9),
+            ('BOTTOMPADDING', (0, 1), (-1, -1), 6),
+        ]))
+        elements.append(t)
+
+        doc.build(elements)
+
+        pdf_data = buffer.getvalue()
+
+        response = make_response(pdf_data)
+        response.headers['Content-Type'] = 'application/pdf'
+        response.headers['Content-Disposition'] = 'attachment; filename=appointments.pdf'
+        return response
+    else:
+        return redirect('/home')
 
 
 @ app.route('/schedule', methods=['GET', 'POST'])
@@ -711,23 +832,9 @@ def schedule():
         return redirect('/home')
 
 
-@ app.route('/appointment')
-def appointment():
-    if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
-        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-        cursor.execute('SELECT * FROM appointments')
-        appointments = cursor.fetchall()
-        cursor.close()
-        return render_template('views/appointment/appointment.html', appointments=appointments)
-    else:
-        return redirect('/home')
-
-
 # if __name__ == '__main__':
 #     app.run(host='0.0.0.0')
-
 # if _name_ == '_main_':
 #   app.run(debug=True, port=4000, host='0.0.0.0')
-
 if __name__ == '__main__':
     app.run(debug=True)

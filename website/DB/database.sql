@@ -26,7 +26,8 @@ CREATE TABLE doctors (
 
 CREATE TABLE appointments (
   `id` INT PRIMARY KEY AUTO_INCREMENT,
+  `patientname` varchar(255) NOT NULL,  
   `dateandtime` varchar(255) NOT NULL,
   `reasonofthevisit` varchar(100) NOT NULL,
-  `fullnameandspecialtydoctor` varchar(255) NOT NULL
+  `fullnameandspecialitydoctor` varchar(255) NOT NULL
 );

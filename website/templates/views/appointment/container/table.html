@@ -1,0 +1,26 @@
+<div class="table-responsive">
+    <table class="table text-center ">
+        <thead>
+            <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Paciente</th>
+                <th scope="col">Fecha y Hora</th>
+                <th scope="col">Razón de la Visita</th>
+                <th scope="col">Doctor Asignado</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for i in range(appointments|count) %}
+            <tr>
+
+                <th scope="row">{{ appointments[i]["id"] }}</th>
+                <td>{{ appointments[i]["patientname"] }}</td>
+                <td>{{ appointments[i]["dateandtime"] }}</td>
+                <td>{{ appointments[i]["reasonofthevisit"] }}</td>
+                <td>{{ appointments[i]["fullnameandspecialitydoctor"] }}</td>
+
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
