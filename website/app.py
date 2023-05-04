@@ -206,36 +206,6 @@ def onclickecreateaccount():
     else:
         return redirect('/home')
 
-    if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
-        id = request.form['id']
-        username = request.form['username']
-        password = request.form['password']
-        email = request.form['email']
-        # cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-        cursor = mysql.connection.cursor()
-        cursor.execute("UPDATE accounts SET id =%s, username=%s, password=%s, email=%s WHERE id=%s",
-                       (id, username, password, email, session['user_id'],))
-        mysql.connection.commit()
-        session.pop('editform', None)
-        return redirect('/account')
-    else:
-        return redirect('/home')
-
-    if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
-        id = request.form['id']
-        username = request.form['username']
-        password = request.form['password']
-        email = request.form['email']
-        # cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-        cursor = mysql.connection.cursor()
-        cursor.execute(
-            'INSERT INTO accounts VALUES (%s, % s, % s, % s)', (id, username, password, email, ))
-        mysql.connection.commit()
-        session.pop('createform', None)
-        return redirect('/account')
-    else:
-        return redirect('/home')
-
 
 @ app.route('/accountmysqltocsv')
 def accountmysqltocsv():
@@ -543,6 +513,26 @@ def searchpatient():
         return redirect('/home')
 
 
+@app.route('/editpatient', methods=['GET', 'POST'])
+def editpatient():
+    if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
+        id = request.form['id']
+        fullname = request.form['fullname']
+        dateofbirth = request.form['dateofbirth']
+        address = request.form['address']
+        phonenumber = request.form['phonenumber']
+
+        # cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor = mysql.connection.cursor()
+        cursor.execute("UPDATE patients SET id =%s, fullname=%s, dateofbirth=%s, address=%s, phonenumber=%s WHERE id=%s",
+                       (id, fullname, dateofbirth, address, phonenumber, session['user_id'],))
+        mysql.connection.commit()
+        session.pop('editform', None)
+        return redirect('/patient')
+    else:
+        return redirect('/home')
+
+
 @ app.route('/createpatient', methods=['GET', 'POST'])
 def createpatient():
     if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
@@ -733,109 +723,11 @@ def appointment():
         return redirect('/home')
 
 
-# @ app.route('/deleteappointment', methods=['GET', 'POST'])
-# def deleteappointment():
-#     if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
-#         user_id = request.form['user_id']
-#         cursor = mysql.connection.cursor()
-#         cursor.execute("DELETE FROM appointments WHERE id = %s", (user_id,))
-#         mysql.connection.commit()
-#         return redirect('/appointment')
-#     else:
-#         return redirect('/home')
-
-
-# @ app.route('/onclickeditappointment', methods=['GET', 'POST'])
-# def onclickeditappointment():
-#     if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
-#         session['user_id'] = request.form['user_id']
-#         session['editform'] = True
-#         return redirect('/appointment')
-#     else:
-#         return redirect('/home')
-
-
-# @ app.route('/onclickecreateappointment', methods=['GET', 'POST'])
-# def onclickecreateappointment():
-#     if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
-#         session['createform'] = True
-#         return redirect('/appointment')
-#     else:
-#         return redirect('/home')
-
-
-# @ app.route('/editappointment', methods=['GET', 'POST'])
-# def editappointment():
-#     if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
-#         id = request.form['id']
-#         username = request.form['username']
-#         email = request.form['email']
-#         name = request.form['name']
-#         address = request.form['address']
-#         phonenumber = request.form['phonenumber']
-#         reasonofthevisit = request.form['reasonofthevisit']
-#         dateandtime = request.form['dateandtime']
-#         # cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-#         cursor = mysql.connection.cursor()
-#         cursor.execute("UPDATE appointments SET id =%s, username=%s, email=%s, name=%s, address=%s, phonenumber=%s, reasonofthevisit=%s, dateandtime=%s WHERE id=%s",
-#                        (id, username, email, name, address, phonenumber, reasonofthevisit, dateandtime, session['user_id'],))
-#         mysql.connection.commit()
-#         session.pop('editform', None)
-#         return redirect('/appointment')
-#     else:
-#         return redirect('/home')
-
-
-# @ app.route('/createappointment', methods=['GET', 'POST'])
-# def createappointment():
-#     if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
-#         id = request.form['id']
-#         username = request.form['username']
-#         email = request.form['email']
-#         name = request.form['name']
-#         address = request.form['address']
-#         phonenumber = request.form['phonenumber']
-#         reasonofthevisit = request.form['reasonofthevisit']
-#         dateandtime = request.form['dateandtime']
-#         # cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-#         cursor = mysql.connection.cursor()
-#         cursor.execute(
-#             'INSERT INTO appointments VALUES (%s, % s, % s, % s, %s, % s, % s, % s)', (id, username, email, name, address, phonenumber, reasonofthevisit, dateandtime))
-#         mysql.connection.commit()
-#         session.pop('createform', None)
-#         return redirect('/appointment')
-#     else:
-#         return redirect('/home')
-
-
-# @ app.route('/appointmentmysqltocsv')
-# def appointmentmysqltocsv():
-#     if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
-#         cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-#         cursor.execute(
-#             'SELECT id, username, email, name, address, phonenumber, reasonofthevisit, dateandtime FROM appointments')
-#         accounts = cursor.fetchall()
-#         csv_file = io.StringIO()
-#         writer = csv.writer(csv_file)
-#         writer.writerow(['ID', 'Usuario', 'Correo Electronico', 'Nombre Completo',
-#                         'Direccion', 'Numero Telefonico', 'Motivo de La visita', 'Fecha y Hora'])
-#         for row in accounts:
-#             writer.writerow([row['id'], row['username'], row['email'], row['name'],
-#                             row['address'], row['phonenumber'], row['reasonofthevisit'], row['dateandtime']])
-
-#         response = Response(csv_file.getvalue(), mimetype='text/csv')
-#         response.headers.set('Content-Disposition',
-#                              'attachment', filename='appointments.csv')
-#         return response
-#     else:
-#         return redirect('/home')
-
 # if __name__ == '__main__':
 #     app.run(host='0.0.0.0')
 
 # if _name_ == '_main_':
 #   app.run(debug=True, port=4000, host='0.0.0.0')
-
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -19,6 +19,13 @@
                 <td>{{ patients[i]["address"] }}</td>
                 <td>{{ patients[i]["phonenumber"] }}</td>
             
+                <form action="{{ url_for('onclickeditpatient') }}" method="POST">
+                    <input type="hidden" name="user_id" value="{{ patients[i]['id'] }}">
+                    <td>
+                        <button type="submit" class="btn btn-danger">Editar</button>
+                    </td>
+                </form>
+
                 <form action="{{ url_for('deletepatient') }}" method="POST">
                     <input type="hidden" name="user_id" value="{{ patients[i]['id'] }}">
                     <td>
