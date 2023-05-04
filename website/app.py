@@ -464,7 +464,7 @@ def doctormysqltocsv():
         return redirect('/home')
 
 
-@app.route('/doctormysqltopdf')
+@ app.route('/doctormysqltopdf')
 def doctormysqltopdf():
     if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
         cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
@@ -526,10 +526,8 @@ def doctormysqltopdf():
     else:
         return redirect('/home')
 
-# -------------------------------------------------------------------------------
 
-
-# ---PATIENTS---
+# ---PACIENTES---
 @app.route('/patient')
 def patient():
     if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
@@ -538,45 +536,132 @@ def patient():
         patients = cursor.fetchall()
         cursor.close()
         return render_template('views/patient/patient.html', patients=patients)
-
     else:
         return redirect('/home')
 
 
-@app.route('/onclickecreatepatient', methods=['GET', 'POST'])
-def onclickecreatepatient():
+@app.route('/searchpatient', methods=['GET', 'POST'])
+def searchpatient():
     if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
-        session['createform'] = True
+
+        searchpatient = request.form['searchpatient']
+        filtered_patients = []
 
         cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-        # cursor.execute("SELECT id FROM patients")
-        cursor.execute("SELECT * FROM patients")
-        session['pacientes'] = cursor.fetchone()
-        return redirect('/patient')
-        # return session['pacientes'][1]
+        cursor.execute('SELECT * FROM patients')
+        patients = cursor.fetchall()
+
+        for patient in patients:
+            if searchpatient in str(patient['id']) or searchpatient in patient['fullname'] or searchpatient in patient['dateofbirth'] or searchpatient in patient['address'] or searchpatient in patient['phonenumber']:
+                filtered_patients.append(patient)
+
+        return render_template('views/patient/patient.html', patients=filtered_patients)
     else:
         return redirect('/home')
 
 
-@ app.route('/createpatient', methods=['GET', 'POST'])
-def createpatient():
+@app.route('/deletepatient', methods=['GET', 'POST'])
+def deletepatient():
     if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
-
-        id = request.form['id']
-        full_name = request.form['full_name']
-        date_of_birth = request.form['date_of_birth']
-        address = request.form['address']
-        phone_number = request.form['phone_number']
-        account_id = request.form['account_id']
-        # cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        user_id = request.form['user_id']
         cursor = mysql.connection.cursor()
-        cursor.execute(
-            'INSERT INTO patients VALUES (%s, % s, % s, % s, % s, % s)', (id, full_name, date_of_birth, address, phone_number, account_id))
+        cursor.execute("DELETE FROM patients WHERE id = %s", (user_id,))
         mysql.connection.commit()
-        session.pop('createform', None)
         return redirect('/patient')
     else:
         return redirect('/home')
+
+
+@ app.route('/patientmysqltocsv')
+def patientmysqltocsv():
+    if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
+        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute(
+            'SELECT id, fullname, dateofbirth, address, phonenumber FROM patients')
+        patients = cursor.fetchall()
+        csv_file = io.StringIO()
+        writer = csv.writer(csv_file)
+        writer.writerow(['ID', 'Nombre Completo', 'Fecha de Nacimiento',
+                        'Direccion', 'Numero de Telefono'])
+        for row in patients:
+            writer.writerow(
+                [
+                    row['id'],
+                    row['fullname'],
+                    row['dateofbirth'],
+                    row['address'],
+                    row['phonenumber']
+                ]
+            )
+        response = Response(csv_file.getvalue(), mimetype='text/csv')
+        response.headers.set('Content-Disposition',
+                             'attachment', filename='patients.csv')
+        return response
+    else:
+        return redirect('/home')
+
+
+@ app.route('/patientmysqltopdf')
+def patientmysqltopdf():
+    if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
+        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute('SELECT * FROM patients')
+        data = cursor.fetchall()
+
+        buffer = BytesIO()
+        doc = SimpleDocTemplate(buffer, pagesize=letter)
+        styles = getSampleStyleSheet()
+
+        elements = []
+
+        header_style = ParagraphStyle(
+            name="header", alignment=TA_CENTER, fontSize=24)
+
+        elements.append(
+            Paragraph('Lista de pacientes<br/><br/><br/>', header_style))
+
+        t = Table(
+            [[
+                'ID',
+                'Nombre Completo',
+                'Fecha de Nacimiento',
+                'Direccion',
+                'Numero de Telefono'
+            ]] + [[
+                doctor['id'],
+                doctor['fullname'],
+                doctor['dateofbirth'],
+                doctor['address'],
+                doctor['phonenumber']]
+                for doctor in data])
+        t.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, 0), colors.red),
+            ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
+            ('ALIGN', (0, 0), (-1, 0), 'CENTER'),
+            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+            ('FONTSIZE', (0, 0), (-1, 0), 10),
+            ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+            ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+            ('TEXTCOLOR', (0, 1), (-1, -1), colors.black),
+            ('ALIGN', (0, 1), (-1, -1), 'CENTER'),
+            ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
+            ('FONTSIZE', (0, 1), (-1, -1), 9),
+            ('BOTTOMPADDING', (0, 1), (-1, -1), 6),
+        ]))
+        elements.append(t)
+
+        doc.build(elements)
+
+        pdf_data = buffer.getvalue()
+
+        response = make_response(pdf_data)
+        response.headers['Content-Type'] = 'application/pdf'
+        response.headers['Content-Disposition'] = 'attachment; filename=patients.pdf'
+        return response
+    else:
+        return redirect('/home')
+
+# -------------------------------------------------------------------------------
 
 
 # --- Citas ---

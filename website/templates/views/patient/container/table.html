@@ -4,9 +4,9 @@
             <tr>
                 <th scope="col">ID</th>
                 <th scope="col">Nombre Completo</th>
-                <th scope="col">Fecha De Nacimiento</th>
+                <th scope="col">Fecha de Nacimiento</th>
                 <th scope="col">Dirección</th>
-                <th scope="col">Numero de Telefono</th>
+                <th scope="col">Número De Télefono</th>
             </tr>
         </thead>
         <tbody>
@@ -14,19 +14,12 @@
             <tr>
 
                 <th scope="row">{{ patients[i]["id"] }}</th>
-                <td>{{ patients[i]["full_name"] }}</td>
-                <td>{{ patients[i]["date_of_birth"] }}</td>
+                <td>{{ patients[i]["fullname"] }}</td>
+                <td>{{ patients[i]["dateofbirth"] }}</td>
                 <td>{{ patients[i]["address"] }}</td>
-                <td>{{ patients[i]["phone_number"] }}</td>
-
-                <form action="{{ url_for('onclickeditaccount') }}" method="POST">
-                    <input type="hidden" name="user_id" value="{{ patients[i]['id'] }}">
-                    <td>
-                        <button type="submit" class="btn btn-danger">Editar</button>
-                    </td>
-                </form>
-
-                <form action="{{ url_for('deleteaccount') }}" method="POST">
+                <td>{{ patients[i]["phonenumber"] }}</td>
+            
+                <form action="{{ url_for('deletepatient') }}" method="POST">
                     <input type="hidden" name="user_id" value="{{ patients[i]['id'] }}">
                     <td>
                         <button type="submit" class="btn btn-danger">Eliminar</button>
