@@ -406,23 +406,6 @@ def onclickeditdoctor():
     else:
         return redirect('/home')
 
-    if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
-        id = request.form['id']
-        fullname = request.form['fullname']
-        speciality = request.form['speciality']
-        address = request.form['address']
-        email = request.form['email']
-        phonenumber = request.form['phonenumber']
-        # cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-        cursor = mysql.connection.cursor()
-        cursor.execute(
-            'INSERT INTO doctors VALUES (%s, % s, % s, % s, % s, % s)', (id, fullname, speciality, address, email, phonenumber))
-        mysql.connection.commit()
-        session.pop('createform', None)
-        return redirect('/doctor')
-    else:
-        return redirect('/home')
-
 
 @app.route('/onclickedcreatedoctor', methods=['GET', 'POST'])
 def onclickedcreatedoctor():
@@ -560,6 +543,25 @@ def searchpatient():
         return redirect('/home')
 
 
+@ app.route('/createpatient', methods=['GET', 'POST'])
+def createpatient():
+    if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
+        id = request.form['id']
+        fullname = request.form['fullname']
+        dateofbirth = request.form['dateofbirth']
+        address = request.form['address']
+        phonenumber = request.form['phonenumber']
+        # cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor = mysql.connection.cursor()
+        cursor.execute(
+            'INSERT INTO patients VALUES (%s, % s, % s, % s, % s)', (id, fullname, dateofbirth, address, phonenumber))
+        mysql.connection.commit()
+        session.pop('createform', None)
+        return redirect('/patient')
+    else:
+        return redirect('/home')
+
+
 @app.route('/deletepatient', methods=['GET', 'POST'])
 def deletepatient():
     if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
@@ -567,6 +569,31 @@ def deletepatient():
         cursor = mysql.connection.cursor()
         cursor.execute("DELETE FROM patients WHERE id = %s", (user_id,))
         mysql.connection.commit()
+        return redirect('/patient')
+    else:
+        return redirect('/home')
+
+
+@app.route('/onclickeditpatient', methods=['GET', 'POST'])
+def onclickeditpatient():
+    if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
+        session['user_id'] = request.form['user_id']
+        session['editform'] = True
+
+        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute("SELECT * FROM patients WHERE id = %s",
+                       (session['user_id'],))
+        session['user_information'] = cursor.fetchone()
+        return redirect('/patient')
+    else:
+        return redirect('/home')
+
+
+@app.route('/onclickedcreatepatient', methods=['GET', 'POST'])
+def onclickedcreatepatient():
+    if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
+        session['createform'] = True
+
         return redirect('/patient')
     else:
         return redirect('/home')
