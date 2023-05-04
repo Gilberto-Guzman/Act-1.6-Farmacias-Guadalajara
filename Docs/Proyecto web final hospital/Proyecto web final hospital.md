@@ -10,6 +10,8 @@
 
 ### Adicionalmente, proximamente estara disponible un archivo llamado readme, el cual contendra toda la documentación necesaria para la comprensión del funcionamiento de la aplicación.
 
+<br>
+
 ### Documentación.
 
     https://github.com/Gilberto-Guzman/Farmacias-Guadalajara/blob/master/readme.md
