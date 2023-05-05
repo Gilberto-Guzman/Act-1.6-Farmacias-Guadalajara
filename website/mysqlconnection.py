@@ -8,8 +8,6 @@ app.secret_key = '1ec8fb36c578c721e00d4143c6d2c2f66bbffb4d7fdb58bcf36a6a8deac713
 
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
-# app.config['MYSQL_USER'] = 'Gilberto'
 app.config['MYSQL_PASSWORD'] = 'CHICHARITOBLUE4'
-# app.config['MYSQL_DB'] = 'farmaciasguadalajara'
-app.config['MYSQL_DB'] = 'test07'
+app.config['MYSQL_DB'] = 'farmaciasguadalajara'
 mysql = MySQL(app)
