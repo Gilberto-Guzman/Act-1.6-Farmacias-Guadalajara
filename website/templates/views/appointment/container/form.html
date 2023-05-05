@@ -23,6 +23,7 @@
             <input id="reasonofthevisit" name="reasonofthevisit" type="text" class="form-control" value="{{ session['user_information']['reasonofthevisit'] }}">
             <h5>Doctor Asignado</h5>
             <select class="form-select" id="fullnameandspecialitydoctor" name="fullnameandspecialitydoctor">
+                <option value="{{ session['user_information']['fullnameandspecialitydoctor'] }}">{{ session['user_information']['fullnameandspecialitydoctor'] }}</option>                
                 {% for doctor in session['doctor_information'] %}
                     <option value="{{ doctor['fullname'] }} - {{ doctor['speciality'] }}">{{ doctor['fullname'] }} - {{ doctor['speciality'] }}</option>
                 {% endfor %}
