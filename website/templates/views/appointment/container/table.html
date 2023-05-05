@@ -19,6 +19,20 @@
                 <td>{{ appointments[i]["reasonofthevisit"] }}</td>
                 <td>{{ appointments[i]["fullnameandspecialitydoctor"] }}</td>
 
+                <form action="{{ url_for('onclickeditappointment') }}" method="POST">
+                    <input type="hidden" name="user_id" value="{{ appointments[i]['id'] }}">
+                    <td>
+                        <button type="submit" class="btn btn-danger">Editar</button>
+                    </td>
+                </form>
+
+                <form action="{{ url_for('deleteappointment') }}" method="POST">
+                    <input type="hidden" name="user_id" value="{{ appointments[i]['id'] }}">
+                    <td>
+                        <button type="submit" class="btn btn-danger">Eliminar</button>
+                    </td>
+                </form>
+
             </tr>
             {% endfor %}
         </tbody>

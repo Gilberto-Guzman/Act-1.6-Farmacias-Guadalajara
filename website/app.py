@@ -717,6 +717,25 @@ def searchappointment():
         return redirect('/home')
 
 
+@ app.route('/editappointment', methods=['GET', 'POST'])
+def editappointment():
+    if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
+        id = request.form['id']
+        patientname = request.form['patientname']
+        dateandtime = request.form['dateandtime']
+        reasonofthevisit = request.form['reasonofthevisit']
+        fullnameandspecialitydoctor = request.form['fullnameandspecialitydoctor']
+        # cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor = mysql.connection.cursor()
+        cursor.execute("UPDATE appointments SET id =%s, patientname=%s, dateandtime=%s, reasonofthevisit=%s, fullnameandspecialitydoctor=%s WHERE id=%s",
+                       (id, patientname, dateandtime, reasonofthevisit, fullnameandspecialitydoctor, session['user_id'],))
+        mysql.connection.commit()
+        session.pop('editform', None)
+        return redirect('/appointment')
+    else:
+        return redirect('/home')
+
+
 @ app.route('/createappointment', methods=['GET', 'POST'])
 def createappointment():
     if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
@@ -731,6 +750,33 @@ def createappointment():
             'INSERT INTO appointments VALUES (%s, % s, % s, % s, % s)', (id, patientname, dateandtime, reasonofthevisit, fullnameandspecialitydoctor))
         mysql.connection.commit()
         session.pop('createform', None)
+        return redirect('/appointment')
+    else:
+        return redirect('/home')
+
+
+@ app.route('/deleteappointment', methods=['GET', 'POST'])
+def deleteappointment():
+    if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
+        user_id = request.form['user_id']
+        cursor = mysql.connection.cursor()
+        cursor.execute("DELETE FROM appointments WHERE id = %s", (user_id,))
+        mysql.connection.commit()
+        return redirect('/appointment')
+    else:
+        return redirect('/home')
+
+
+@ app.route('/onclickeditappointment', methods=['GET', 'POST'])
+def onclickeditappointment():
+    if session.get('loggedin') == True and session.get('username') == 'Administrador' and session.get('id') == -1:
+        session['user_id'] = request.form['user_id']
+        session['editform'] = True
+
+        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute("SELECT * FROM appointments WHERE id = %s",
+                       (session['user_id'],))
+        session['user_information'] = cursor.fetchone()
         return redirect('/appointment')
     else:
         return redirect('/home')
