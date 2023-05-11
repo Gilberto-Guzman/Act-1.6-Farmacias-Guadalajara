@@ -10,6 +10,9 @@
     pip install csv
     pip install reportlab
 
+    pip install flask
+    pip install reportlab
+
 ### comandos Utilizados
 
     python3 app.py
