@@ -917,5 +917,14 @@ def schedule():
 #     app.run(host='0.0.0.0')
 # if _name_ == '_main_':
 #   app.run(debug=True, port=4000, host='0.0.0.0')
+# if __name__ == '__main__':
+#     app.run(debug=True)
+
+# if __name__ == '__main__':
+#    app.run(debug=True, port= 8082, host="0.0.0.0")
+
+# if __name__ == '__main__':
+#    app.run(debug=True, port= 8082)
+
 if __name__ == '__main__':
-    app.run(debug=True)
+   app.run(debug=True, port= 4000, host="0.0.0.0")
