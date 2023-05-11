@@ -57,3 +57,7 @@ Once the MySQL client library is installed, try running your Python code again. 
     pip install mysqlclient
 
 Alternatively, you can try using a different MySQL library for Python, such as PyMySQL or mysql-connector-python.
+
+test
+
+http://localhost:7000/home
