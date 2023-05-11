@@ -21,6 +21,22 @@ from reportlab.platypus import Paragraph, SimpleDocTemplate, Table, TableStyle
 
 from io import BytesIO
 
+from flask_mail import Mail, Message
+
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'  # Servidor SMTP
+app.config['MAIL_PORT'] = 587  # Puerto del servidor SMTP
+app.config['MAIL_USE_TLS'] = True  # Usar TLS para cifrado
+app.config['MAIL_USERNAME'] = 'jose.guzman53@unach.mx'  # Tu dirección de correo electrónico
+app.config['MAIL_PASSWORD'] = 'hkldqyrlvoscublf'  # Tu contraseña de correo electrónico
+mail = Mail(app)
+
+@app.route('/enviar-correo')
+def enviar_correo():
+    msg = Message('Asunto del correo', sender='jose.guzman53@unach.mx', recipients=['jose.guzman53@unach.mx'])
+    msg.body = 'Cuerpo del correo'
+    mail.send(msg)
+    return 'Correo enviado correctamente'
+
 
 @ app.route("/")
 def index():
@@ -917,8 +933,8 @@ def schedule():
 #     app.run(host='0.0.0.0')
 # if _name_ == '_main_':
 #   app.run(debug=True, port=4000, host='0.0.0.0')
-# if __name__ == '__main__':
-#     app.run(debug=True)
+if __name__ == '__main__':
+    app.run(debug=True)
 
 # if __name__ == '__main__':
 #    app.run(debug=True, port= 8082, host="0.0.0.0")
